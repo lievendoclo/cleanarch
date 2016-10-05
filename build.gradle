@@ -1,0 +1,71 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.1.RELEASE")
+		classpath 'io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE'
+	}
+}
+
+subprojects {
+	apply plugin: "java"
+	apply plugin: 'io.spring.dependency-management'
+
+	repositories {
+		mavenCentral()
+	}
+
+	dependencyManagement {
+		imports {
+			mavenBom 'io.spring.platform:platform-bom:Athens-RELEASE'
+		}
+	}
+
+	dependencies {
+		compile "javax.inject:javax.inject:1"
+	}
+}
+
+project(":app-api") {
+}
+
+project(":app-impl") {
+	dependencies {
+		compile project(":app-api")
+		compile project(":domain")
+	}
+}
+
+project(":domain") {
+}
+
+project(":infra-rest") {
+	dependencies {
+		compile project(":app-api")
+
+		compile "org.springframework.boot:spring-boot-starter-web"
+	}
+}
+
+project(":infra-db") {
+	dependencies {
+		compile project(":domain")
+
+		compile "org.springframework.boot:spring-boot-starter-data-jpa"
+	}
+}
+
+project(":springboot-deployment") {
+	apply plugin: "spring-boot"
+
+	dependencies {
+		compile project(":domain")
+		compile project(":app-api")
+		compile project(":app-impl")
+		compile project(":infra-db")
+		compile project(":infra-rest")
+
+		compile "com.h2database:h2"
+	}
+}

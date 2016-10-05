@@ -1,0 +1,6 @@
+include "domain"
+include "app-api"
+include "app-impl"
+include "infra-rest"
+include "infra-db"
+include "springboot-deployment"
