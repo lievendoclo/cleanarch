@@ -4,19 +4,16 @@ public class AddTenantToBuildingRequest {
 	private String buildingId;
 	private String name;
 
+	public AddTenantToBuildingRequest(String buildingId, String name) {
+		this.buildingId = buildingId;
+		this.name = name;
+	}
+
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getBuildingId() {
 		return buildingId;
-	}
-
-	public void setBuildingId(String buildingId) {
-		this.buildingId = buildingId;
 	}
 }

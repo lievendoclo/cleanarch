@@ -12,13 +12,20 @@ import be.insaneprogramming.cleanarch.responsemodel.CreateBuildingResponse;
 
 @Named
 public class CreateBuildingImpl implements CreateBuilding {
-	@Inject
 	private BuildingEntityGateway buildingEntityGateway;
-	@Inject
 	private BuildingFactory buildingFactory;
+
+	@Inject
+	public CreateBuildingImpl(BuildingEntityGateway buildingEntityGateway, BuildingFactory buildingFactory) {
+		this.buildingEntityGateway = buildingEntityGateway;
+		this.buildingFactory = buildingFactory;
+	}
 
 	@Override
 	public CreateBuildingResponse execute(CreateBuildingRequest request) {
+		if(request == null) {
+			throw new IllegalArgumentException("request should not be null");
+		}
 		Building building = buildingFactory.createBuilding(request.getName());
 		return new CreateBuildingResponse(buildingEntityGateway.save(building));
 	}

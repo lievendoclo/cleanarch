@@ -10,11 +10,18 @@ import be.insaneprogramming.cleanarch.responsemodel.ListBuildingResponse;
 
 @Named
 public class ListBuildingsImpl implements ListBuildings {
-	@Inject
 	private BuildingEntityGateway buildingEntityGateway;
+
+	@Inject
+	public ListBuildingsImpl(BuildingEntityGateway buildingEntityGateway) {
+		this.buildingEntityGateway = buildingEntityGateway;
+	}
 
 	@Override
 	public ListBuildingResponse execute(ListBuildingRequest request) {
+		if(request == null) {
+			throw new IllegalArgumentException("request should not be null");
+		}
 		ListBuildingResponse response = new ListBuildingResponse();
 		buildingEntityGateway.findAll().forEach(b ->
 				response.getItems().add(new ListBuildingResponse.ListBuildingResponseItem(b.id, b.name))

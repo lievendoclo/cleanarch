@@ -11,13 +11,20 @@ import be.insaneprogramming.cleanarch.requestmodel.AddTenantToBuildingRequest;
 
 @Named
 public class AddTenantToBuildingImpl implements AddTenantToBuilding {
-	@Inject
 	private BuildingEntityGateway buildingEntityGateway;
-	@Inject
 	private TenantFactory tenantFactory;
+
+	@Inject
+	public AddTenantToBuildingImpl(BuildingEntityGateway buildingEntityGateway, TenantFactory tenantFactory) {
+		this.buildingEntityGateway = buildingEntityGateway;
+		this.tenantFactory = tenantFactory;
+	}
 
 	@Override
 	public void execute(AddTenantToBuildingRequest request) {
+		if(request == null) {
+			throw new IllegalArgumentException("request should not be null");
+		}
 		Building building = buildingEntityGateway.findById(request.getBuildingId());
 		building.addTenant(tenantFactory.createTenant(request.getName()));
 		buildingEntityGateway.save(building);

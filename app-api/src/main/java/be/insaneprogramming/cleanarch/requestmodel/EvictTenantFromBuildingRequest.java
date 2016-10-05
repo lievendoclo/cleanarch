@@ -4,19 +4,16 @@ public class EvictTenantFromBuildingRequest {
 	private String buildingId;
 	private String tenantId;
 
+	public EvictTenantFromBuildingRequest(String buildingId, String tenantId) {
+		this.buildingId = buildingId;
+		this.tenantId = tenantId;
+	}
+
 	public String getBuildingId() {
 		return buildingId;
 	}
 
-	public void setBuildingId(String buildingId) {
-		this.buildingId = buildingId;
-	}
-
 	public String getTenantId() {
 		return tenantId;
-	}
-
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
 	}
 }

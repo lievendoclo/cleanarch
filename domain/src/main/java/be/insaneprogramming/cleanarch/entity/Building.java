@@ -8,7 +8,7 @@ public class Building {
 	public String name;
 	public List<Tenant> tenants;
 
-	Building(String id, String name) {
+	public Building(String id, String name) {
 		this.id = id;
 		this.name = name;
 		this.tenants = new ArrayList<>();

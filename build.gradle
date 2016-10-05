@@ -9,7 +9,7 @@ buildscript {
 }
 
 subprojects {
-	apply plugin: "java"
+	apply plugin: "groovy"
 	apply plugin: 'io.spring.dependency-management'
 
 	repositories {
@@ -24,6 +24,10 @@ subprojects {
 
 	dependencies {
 		compile "javax.inject:javax.inject:1"
+		testCompile "org.spockframework:spock-core:1.1-groovy-2.4-rc-2"
+		testCompile "org.codehaus.groovy:groovy-all:2.4.7"
+		testCompile 'cglib:cglib-nodep:3.2.4'
+		testCompile 'org.objenesis:objenesis:2.4'
 	}
 }
 
