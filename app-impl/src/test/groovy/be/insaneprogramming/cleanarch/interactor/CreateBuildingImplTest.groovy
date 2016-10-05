@@ -25,7 +25,7 @@ class CreateBuildingImplTest extends Specification {
 		buildingEntityGateway.save(createdBuilding) >> 'testId'
 
 		and:
-		def request = new CreateBuildingRequest(name: 'testBuilding')
+		def request = new CreateBuildingRequest('testBuilding')
 
 		when:
 		def response = createBuilding.execute(request)
