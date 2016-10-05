@@ -49,15 +49,12 @@ public class BuildingResource {
 
 	@GetMapping("{buildingId}/tenant")
 	public void addTenant(@PathVariable("buildingId") String buildingId, @RequestBody AddTenantToBuildingRequest request) {
-		request.setBuildingId(buildingId);
 		addTenantToBuilding.execute(request);
 	}
 
 	@DeleteMapping("{buildingId}/tenant/{tenantId}")
 	public void evictTenant(@PathVariable("buildingId") String buildingId, @PathVariable("tenantId") String tenantId) {
-		EvictTenantFromBuildingRequest request = new EvictTenantFromBuildingRequest();
-		request.setBuildingId(buildingId);
-		request.setTenantId(tenantId);
+		EvictTenantFromBuildingRequest request = new EvictTenantFromBuildingRequest(buildingId, tenantId);
 		evictTenantFromBuilding.execute(request);
 	}
 }
