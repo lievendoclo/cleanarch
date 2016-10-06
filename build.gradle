@@ -48,15 +48,15 @@ project(":infra-rest") {
 	dependencies {
 		compile project(":app-api")
 
-		compile "org.springframework.boot:spring-boot-starter-web"
+		compile "org.springframework:spring-webmvc"
 	}
 }
 
 project(":infra-db") {
 	dependencies {
 		compile project(":domain")
-
-		compile "org.springframework.boot:spring-boot-starter-data-jpa"
+		compile "org.springframework.data:spring-data-jpa"
+		compile "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final"
 	}
 }
 
@@ -69,6 +69,10 @@ project(":springboot-deployment") {
 		compile project(":app-impl")
 		compile project(":infra-db")
 		compile project(":infra-rest")
+
+		compile "org.springframework.boot:spring-boot-starter-web"
+		compile "org.springframework.boot:spring-boot-starter-data-jpa"
+		compile "org.springframework.boot:spring-boot-actuator"
 
 		compile "com.h2database:h2"
 	}

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import be.insaneprogramming.cleanarch.entity.Building;
 import be.insaneprogramming.cleanarch.entity.BuildingFactory;
@@ -15,12 +15,16 @@ import be.insaneprogramming.cleanarch.entitygatewayimpl.jpa.BuildingJpaEntity;
 import be.insaneprogramming.cleanarch.entitygatewayimpl.jpa.BuildingJpaEntityRepository;
 import be.insaneprogramming.cleanarch.entitygatewayimpl.jpa.TenantJpaEntity;
 
-@Component
+@Named
 public class JpaBuildingEntityGateway implements BuildingEntityGateway {
-	@Autowired
 	private BuildingJpaEntityRepository buildingJpaEntityRepository;
-	@Autowired
 	private BuildingFactory buildingFactory;
+
+	@Inject
+	public JpaBuildingEntityGateway(BuildingJpaEntityRepository buildingJpaEntityRepository, BuildingFactory buildingFactory) {
+		this.buildingJpaEntityRepository = buildingJpaEntityRepository;
+		this.buildingFactory = buildingFactory;
+	}
 
 	@Override
 	public String save(Building building) {
