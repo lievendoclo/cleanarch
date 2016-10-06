@@ -3,15 +3,15 @@ package be.insaneprogramming.cleanarch.responsemodel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListBuildingResponse {
+public class ListBuildingsResponse {
 
-	private List<ListBuildingResponseItem> items = new ArrayList<>();
+	private List<ListBuildingsResponseItem> items = new ArrayList<>();
 
-	public static class ListBuildingResponseItem {
+	public static class ListBuildingsResponseItem {
 		private String id;
 		private String name;
 
-		public ListBuildingResponseItem(String id, String name) {
+		public ListBuildingsResponseItem(String id, String name) {
 			this.id = id;
 			this.name = name;
 		}
@@ -25,7 +25,7 @@ public class ListBuildingResponse {
 		}
 	}
 
-	public List<ListBuildingResponseItem> getItems() {
+	public List<ListBuildingsResponseItem> getItems() {
 		return items;
 	}
 }

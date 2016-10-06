@@ -3,7 +3,7 @@ package be.insaneprogramming.cleanarch.interactor
 import be.insaneprogramming.cleanarch.boundary.ListBuildings
 import be.insaneprogramming.cleanarch.entity.Building
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway
-import be.insaneprogramming.cleanarch.requestmodel.ListBuildingRequest
+import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest
 import spock.lang.Specification
 
 class ListBuildingsImplTest extends Specification {
@@ -21,7 +21,7 @@ class ListBuildingsImplTest extends Specification {
 		buildingEntityGateway.findAll() >> buildings
 
 		and:
-		def request = new ListBuildingRequest()
+		def request = new ListBuildingsRequest()
 
 		when:
 		def response = listBuildings.execute(request)

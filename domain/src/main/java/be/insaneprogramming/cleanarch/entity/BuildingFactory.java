@@ -12,6 +12,6 @@ public class BuildingFactory {
 	}
 
 	public Building createBuilding(String name) {
-		return new Building(UUID.randomUUID().toString(), name);
+		return createBuilding(UUID.randomUUID().toString(), name);
 	}
 }

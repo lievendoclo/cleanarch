@@ -17,9 +17,9 @@ import be.insaneprogramming.cleanarch.boundary.ListBuildings;
 import be.insaneprogramming.cleanarch.requestmodel.AddTenantToBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequest;
-import be.insaneprogramming.cleanarch.requestmodel.ListBuildingRequest;
+import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest;
 import be.insaneprogramming.cleanarch.responsemodel.CreateBuildingResponse;
-import be.insaneprogramming.cleanarch.responsemodel.ListBuildingResponse;
+import be.insaneprogramming.cleanarch.responsemodel.ListBuildingsResponse;
 
 @RestController
 @RequestMapping("/building")
@@ -43,7 +43,7 @@ public class BuildingResource {
 	}
 
 	@GetMapping
-	public ListBuildingResponse list(@RequestBody ListBuildingRequest request) {
+	public ListBuildingsResponse list(@RequestBody ListBuildingsRequest request) {
 		return listBuildings.execute(request);
 	}
 

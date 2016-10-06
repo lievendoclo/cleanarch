@@ -48,7 +48,7 @@ public class JpaBuildingEntityGateway implements BuildingEntityGateway {
 	}
 
 	private Building toDomain(BuildingJpaEntity entity) {
-		Building building = buildingFactory.createBuilding(entity.getId(), entity.getId());
+		Building building = buildingFactory.createBuilding(entity.getId(), entity.getName());
 		building.tenants = entity.getTenants().stream().map(this::toDomain).collect(Collectors.toList());
 		return building;
 	}

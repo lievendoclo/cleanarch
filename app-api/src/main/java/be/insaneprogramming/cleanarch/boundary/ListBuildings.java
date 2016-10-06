@@ -1,9 +1,9 @@
 package be.insaneprogramming.cleanarch.boundary;
 
-import be.insaneprogramming.cleanarch.requestmodel.ListBuildingRequest;
-import be.insaneprogramming.cleanarch.responsemodel.ListBuildingResponse;
+import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest;
+import be.insaneprogramming.cleanarch.responsemodel.ListBuildingsResponse;
 
 @FunctionalInterface
 public interface ListBuildings {
-	ListBuildingResponse execute(ListBuildingRequest request);
+	ListBuildingsResponse execute(ListBuildingsRequest request);
 }
