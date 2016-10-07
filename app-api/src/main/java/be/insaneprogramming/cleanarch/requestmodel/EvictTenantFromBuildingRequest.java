@@ -1,19 +1,10 @@
 package be.insaneprogramming.cleanarch.requestmodel;
 
-public class EvictTenantFromBuildingRequest {
-	private String buildingId;
-	private String tenantId;
+import org.immutables.value.Value;
 
-	public EvictTenantFromBuildingRequest(String buildingId, String tenantId) {
-		this.buildingId = buildingId;
-		this.tenantId = tenantId;
-	}
-
-	public String getBuildingId() {
-		return buildingId;
-	}
-
-	public String getTenantId() {
-		return tenantId;
-	}
+@Value.Immutable
+@Value.Style(visibility = Value.Style.ImplementationVisibility.PRIVATE, newBuilder = "builder")
+public interface EvictTenantFromBuildingRequest {
+	String getBuildingId();
+	String getTenantId();
 }

@@ -2,6 +2,7 @@ package be.insaneprogramming.cleanarch.entitygatewayimpl.jpa;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -12,7 +13,7 @@ public class BuildingJpaEntity {
 	@Id
 	private String id;
 	private String name;
-	@OneToMany
+	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "building_id")
 	private List<TenantJpaEntity> tenants;
 

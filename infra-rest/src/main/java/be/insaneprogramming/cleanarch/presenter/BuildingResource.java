@@ -1,7 +1,13 @@
 package be.insaneprogramming.cleanarch.presenter;
 
+import static be.insaneprogramming.cleanarch.presenter.BuildingResource.RESOURCE_URI_TEMPLATE;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,21 +15,26 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriTemplate;
 
 import be.insaneprogramming.cleanarch.boundary.AddTenantToBuilding;
 import be.insaneprogramming.cleanarch.boundary.CreateBuilding;
 import be.insaneprogramming.cleanarch.boundary.EvictTenantFromBuilding;
 import be.insaneprogramming.cleanarch.boundary.ListBuildings;
-import be.insaneprogramming.cleanarch.requestmodel.AddTenantToBuildingRequest;
-import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest;
+import be.insaneprogramming.cleanarch.presenter.payloadmodel.ImmutableAddTenantToBuildingJsonPayload;
+import be.insaneprogramming.cleanarch.presenter.payloadmodel.ImmutableCreateBuildingJsonPayload;
+import be.insaneprogramming.cleanarch.presenter.viewmodel.BuildingJson;
+import be.insaneprogramming.cleanarch.presenter.viewmodel.BuildingJsonBuilder;
 import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequest;
-import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest;
-import be.insaneprogramming.cleanarch.responsemodel.CreateBuildingResponse;
-import be.insaneprogramming.cleanarch.responsemodel.ListBuildingsResponse;
+import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequestBuilder;
+import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequestBuilder;
 
 @RestController
-@RequestMapping("/building")
+@RequestMapping(RESOURCE_URI_TEMPLATE)
 public class BuildingResource {
+	static final String RESOURCE_URI_TEMPLATE = "/building";
+	static final String GET_SINGLE_URI_TEMPLATE = RESOURCE_URI_TEMPLATE + "/{id}";
+
 	private final ListBuildings listBuildings;
 	private final CreateBuilding createBuilding;
 	private final AddTenantToBuilding addTenantToBuilding;
@@ -38,23 +49,28 @@ public class BuildingResource {
 	}
 
 	@PostMapping
-	public CreateBuildingResponse create(@RequestBody CreateBuildingRequest request) {
-		return createBuilding.execute(request);
+	public ResponseEntity create(@RequestBody ImmutableCreateBuildingJsonPayload payload) {
+		String id = createBuilding.execute(payload.toRequest());
+		return ResponseEntity.created(new UriTemplate(GET_SINGLE_URI_TEMPLATE).expand(id).normalize()).build();
 	}
 
 	@GetMapping
-	public ListBuildingsResponse list(@RequestBody ListBuildingsRequest request) {
-		return listBuildings.execute(request);
+	public ResponseEntity<List<BuildingJson>> list() {
+		List<BuildingJson> collect = listBuildings.execute(ListBuildingsRequestBuilder.builder().build()).stream().map(it -> BuildingJsonBuilder.builder().id(it.getId()).name(it.getName()).build()).collect(Collectors.toList());
+		return ResponseEntity.ok(collect);
 	}
 
-	@GetMapping("{buildingId}/tenant")
-	public void addTenant(@PathVariable("buildingId") String buildingId, @RequestBody AddTenantToBuildingRequest request) {
-		addTenantToBuilding.execute(request);
+	@PostMapping("{buildingId}/tenant")
+	public void addTenant(@PathVariable("buildingId") String buildingId, @RequestBody ImmutableAddTenantToBuildingJsonPayload payload) {
+		addTenantToBuilding.execute(payload.toRequest(buildingId));
 	}
 
 	@DeleteMapping("{buildingId}/tenant/{tenantId}")
 	public void evictTenant(@PathVariable("buildingId") String buildingId, @PathVariable("tenantId") String tenantId) {
-		EvictTenantFromBuildingRequest request = new EvictTenantFromBuildingRequest(buildingId, tenantId);
+		EvictTenantFromBuildingRequest request = EvictTenantFromBuildingRequestBuilder.builder()
+			.buildingId(buildingId)
+			.tenantId(tenantId)
+			.build();
 		evictTenantFromBuilding.execute(request);
 	}
 }

@@ -4,7 +4,7 @@ import be.insaneprogramming.cleanarch.boundary.EvictTenantFromBuilding
 import be.insaneprogramming.cleanarch.entity.Building
 import be.insaneprogramming.cleanarch.entity.BuildingFactory
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway
-import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequest
+import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequestBuilder
 import spock.lang.Specification
 
 class EvictTenantFromBuildingImplTest extends Specification {
@@ -24,7 +24,7 @@ class EvictTenantFromBuildingImplTest extends Specification {
 		buildingEntityGateway.findById('buildingId') >> building
 
 		and:
-		def request = new EvictTenantFromBuildingRequest('buildingId', 'tenantId')
+		def request = EvictTenantFromBuildingRequestBuilder.builder().buildingId('buildingId').tenantId('tenantId').build();
 
 		when:
 		evictTenantFromBuilding.execute(request)

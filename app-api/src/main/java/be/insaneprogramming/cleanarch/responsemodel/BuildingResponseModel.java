@@ -1,10 +1,10 @@
-package be.insaneprogramming.cleanarch.requestmodel;
+package be.insaneprogramming.cleanarch.responsemodel;
 
 import org.immutables.value.Value;
 
 @Value.Immutable
 @Value.Style(visibility = Value.Style.ImplementationVisibility.PRIVATE, newBuilder = "builder")
-public interface AddTenantToBuildingRequest {
+public interface BuildingResponseModel {
+	String getId();
 	String getName();
-	String getBuildingId();
 }

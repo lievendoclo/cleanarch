@@ -60,7 +60,7 @@ public class JpaBuildingEntityGateway implements BuildingEntityGateway {
 	private TenantJpaEntity fromDomain(Tenant tenant) {
 		TenantJpaEntity entity = new TenantJpaEntity();
 		entity.setId(tenant.getId());
-		entity.setId(tenant.getName());
+		entity.setName(tenant.getName());
 		return entity;
 	}
 

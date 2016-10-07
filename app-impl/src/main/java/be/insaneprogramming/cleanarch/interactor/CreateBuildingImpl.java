@@ -8,7 +8,6 @@ import be.insaneprogramming.cleanarch.entity.Building;
 import be.insaneprogramming.cleanarch.entity.BuildingFactory;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest;
-import be.insaneprogramming.cleanarch.responsemodel.CreateBuildingResponse;
 
 @Named
 public class CreateBuildingImpl implements CreateBuilding {
@@ -22,11 +21,11 @@ public class CreateBuildingImpl implements CreateBuilding {
 	}
 
 	@Override
-	public CreateBuildingResponse execute(CreateBuildingRequest request) {
+	public String execute(CreateBuildingRequest request) {
 		if(request == null) {
 			throw new IllegalArgumentException("request should not be null");
 		}
 		Building building = buildingFactory.createBuilding(request.getName());
-		return new CreateBuildingResponse(buildingEntityGateway.save(building));
+		return buildingEntityGateway.save(building);
 	}
 }

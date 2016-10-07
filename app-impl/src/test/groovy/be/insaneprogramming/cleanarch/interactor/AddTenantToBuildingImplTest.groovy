@@ -5,7 +5,7 @@ import be.insaneprogramming.cleanarch.entity.Building
 import be.insaneprogramming.cleanarch.entity.Tenant
 import be.insaneprogramming.cleanarch.entity.TenantFactory
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway
-import be.insaneprogramming.cleanarch.requestmodel.AddTenantToBuildingRequest
+import be.insaneprogramming.cleanarch.requestmodel.AddTenantToBuildingRequestBuilder
 import spock.lang.Specification
 
 class AddTenantToBuildingImplTest extends Specification {
@@ -27,7 +27,7 @@ class AddTenantToBuildingImplTest extends Specification {
 		tenantFactory.createTenant('tenantName') >> tenant
 
 		and:
-		def request = new AddTenantToBuildingRequest('buildingId', 'tenantName')
+		def request = AddTenantToBuildingRequestBuilder.builder().buildingId('buildingId').name('tenantName').build()
 
 		when:
 		addTenantToBuilding.execute(request)

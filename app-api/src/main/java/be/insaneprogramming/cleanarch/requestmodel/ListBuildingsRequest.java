@@ -1,4 +1,8 @@
 package be.insaneprogramming.cleanarch.requestmodel;
 
-public class ListBuildingsRequest {
+import org.immutables.value.Value;
+
+@Value.Immutable
+@Value.Style(visibility = Value.Style.ImplementationVisibility.PRIVATE, newBuilder = "builder")
+public interface ListBuildingsRequest {
 }

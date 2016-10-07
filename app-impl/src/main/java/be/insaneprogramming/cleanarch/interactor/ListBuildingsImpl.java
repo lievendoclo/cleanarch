@@ -1,12 +1,16 @@
 package be.insaneprogramming.cleanarch.interactor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import be.insaneprogramming.cleanarch.boundary.ListBuildings;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest;
-import be.insaneprogramming.cleanarch.responsemodel.ListBuildingsResponse;
+import be.insaneprogramming.cleanarch.responsemodel.BuildingResponseModel;
+import be.insaneprogramming.cleanarch.responsemodel.BuildingResponseModelBuilder;
 
 @Named
 public class ListBuildingsImpl implements ListBuildings {
@@ -18,13 +22,13 @@ public class ListBuildingsImpl implements ListBuildings {
 	}
 
 	@Override
-	public ListBuildingsResponse execute(ListBuildingsRequest request) {
+	public List<BuildingResponseModel> execute(ListBuildingsRequest request) {
 		if(request == null) {
 			throw new IllegalArgumentException("request should not be null");
 		}
-		ListBuildingsResponse response = new ListBuildingsResponse();
+		List<BuildingResponseModel> response = new ArrayList<>();
 		buildingEntityGateway.findAll().forEach(b ->
-				response.getItems().add(new ListBuildingsResponse.ListBuildingsResponseItem(b.id, b.name))
+				response.add(BuildingResponseModelBuilder.builder().id(b.id).name(b.name).build())
 		);
 		return response;
 	}

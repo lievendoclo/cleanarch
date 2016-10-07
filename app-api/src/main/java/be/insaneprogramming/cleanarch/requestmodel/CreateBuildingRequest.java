@@ -1,13 +1,9 @@
 package be.insaneprogramming.cleanarch.requestmodel;
 
-public class CreateBuildingRequest {
-	private String name;
+import org.immutables.value.Value;
 
-	public CreateBuildingRequest(String name) {
-		this.name = name;
-	}
-
-	public String getName() {
-		return name;
-	}
+@Value.Immutable
+@Value.Style(visibility = Value.Style.ImplementationVisibility.PRIVATE, newBuilder = "builder")
+public interface CreateBuildingRequest {
+	String getName();
 }

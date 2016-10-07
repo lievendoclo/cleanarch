@@ -4,7 +4,7 @@ import be.insaneprogramming.cleanarch.boundary.CreateBuilding
 import be.insaneprogramming.cleanarch.entity.Building
 import be.insaneprogramming.cleanarch.entity.BuildingFactory
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway
-import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest
+import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequestBuilder
 import spock.lang.Specification
 
 class CreateBuildingImplTest extends Specification {
@@ -25,13 +25,13 @@ class CreateBuildingImplTest extends Specification {
 		buildingEntityGateway.save(createdBuilding) >> 'testId'
 
 		and:
-		def request = new CreateBuildingRequest('testBuilding')
+		def request = CreateBuildingRequestBuilder.builder().name('testBuilding').build()
 
 		when:
 		def response = createBuilding.execute(request)
 
 		then:
-		response.id == 'testId'
+		response == 'testId'
 	}
 
 	def "request should not be null"() {
