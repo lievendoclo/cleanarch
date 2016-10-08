@@ -10,7 +10,7 @@ import be.insaneprogramming.cleanarch.boundary.ListBuildings;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest;
 import be.insaneprogramming.cleanarch.responsemodel.BuildingResponseModel;
-import be.insaneprogramming.cleanarch.responsemodel.BuildingResponseModelBuilder;
+import be.insaneprogramming.cleanarch.responsemodel.ImmutableBuildingResponseModel;
 
 @Named
 public class ListBuildingsImpl implements ListBuildings {
@@ -28,7 +28,7 @@ public class ListBuildingsImpl implements ListBuildings {
 		}
 		List<BuildingResponseModel> response = new ArrayList<>();
 		buildingEntityGateway.findAll().forEach(b ->
-				response.add(BuildingResponseModelBuilder.builder().id(b.id).name(b.name).build())
+				response.add(ImmutableBuildingResponseModel.builder().id(b.getId().get()).name(b.getName()).build())
 		);
 		return response;
 	}

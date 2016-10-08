@@ -2,8 +2,9 @@ package be.insaneprogramming.cleanarch.interactor
 
 import be.insaneprogramming.cleanarch.boundary.ListBuildings
 import be.insaneprogramming.cleanarch.entity.Building
+import be.insaneprogramming.cleanarch.entity.ImmutableBuildingId
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway
-import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequestBuilder
+import be.insaneprogramming.cleanarch.requestmodel.ImmutableListBuildingsRequest
 import spock.lang.Specification
 
 class ListBuildingsImplTest extends Specification {
@@ -17,11 +18,11 @@ class ListBuildingsImplTest extends Specification {
 
 	def "test execute"() {
 		given:
-		def buildings = [new Building('one', 'testOne'), new Building('two', 'testTwo')]
+		def buildings = [new Building(ImmutableBuildingId.of('one'), 'testOne'), new Building(ImmutableBuildingId.of('two'), 'testTwo')]
 		buildingEntityGateway.findAll() >> buildings
 
 		when:
-		def response = listBuildings.execute(ListBuildingsRequestBuilder.builder().build())
+		def response = listBuildings.execute(ImmutableListBuildingsRequest.builder().build())
 
 		then:
 		response.size() == 2

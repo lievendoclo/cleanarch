@@ -24,10 +24,10 @@ import be.insaneprogramming.cleanarch.boundary.ListBuildings;
 import be.insaneprogramming.cleanarch.presenter.payloadmodel.ImmutableAddTenantToBuildingJsonPayload;
 import be.insaneprogramming.cleanarch.presenter.payloadmodel.ImmutableCreateBuildingJsonPayload;
 import be.insaneprogramming.cleanarch.presenter.viewmodel.BuildingJson;
-import be.insaneprogramming.cleanarch.presenter.viewmodel.BuildingJsonBuilder;
+import be.insaneprogramming.cleanarch.presenter.viewmodel.ImmutableBuildingJson;
 import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequest;
-import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequestBuilder;
-import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequestBuilder;
+import be.insaneprogramming.cleanarch.requestmodel.ImmutableEvictTenantFromBuildingRequest;
+import be.insaneprogramming.cleanarch.requestmodel.ImmutableListBuildingsRequest;
 
 @RestController
 @RequestMapping(RESOURCE_URI_TEMPLATE)
@@ -56,7 +56,7 @@ public class BuildingResource {
 
 	@GetMapping
 	public ResponseEntity<List<BuildingJson>> list() {
-		List<BuildingJson> collect = listBuildings.execute(ListBuildingsRequestBuilder.builder().build()).stream().map(it -> BuildingJsonBuilder.builder().id(it.getId()).name(it.getName()).build()).collect(Collectors.toList());
+		List<BuildingJson> collect = listBuildings.execute(ImmutableListBuildingsRequest.builder().build()).stream().map(it -> ImmutableBuildingJson.builder().id(it.getId()).name(it.getName()).build()).collect(Collectors.toList());
 		return ResponseEntity.ok(collect);
 	}
 
@@ -67,7 +67,7 @@ public class BuildingResource {
 
 	@DeleteMapping("{buildingId}/tenant/{tenantId}")
 	public void evictTenant(@PathVariable("buildingId") String buildingId, @PathVariable("tenantId") String tenantId) {
-		EvictTenantFromBuildingRequest request = EvictTenantFromBuildingRequestBuilder.builder()
+		EvictTenantFromBuildingRequest request = ImmutableEvictTenantFromBuildingRequest.builder()
 			.buildingId(buildingId)
 			.tenantId(tenantId)
 			.build();
