@@ -47,14 +47,14 @@ public class JpaBuildingEntityGateway implements BuildingEntityGateway {
 	private BuildingJpaEntity fromDomain(Building building) {
 		BuildingJpaEntity jpaEntity = new BuildingJpaEntity();
 		jpaEntity.setId(building.getId().get());
-		jpaEntity.setName(building.name);
-		jpaEntity.setTenants(building.tenants.stream().map(this::fromDomain).collect(Collectors.toList()));
+		jpaEntity.setName(building.getName());
+		jpaEntity.setTenants(building.getTenants().stream().map(this::fromDomain).collect(Collectors.toList()));
 		return jpaEntity;
 	}
 
 	private Building toDomain(BuildingJpaEntity entity) {
 		Building building = buildingFactory.createBuilding(ImmutableBuildingId.of(entity.getId()), entity.getName());
-		building.tenants = entity.getTenants().stream().map(this::toDomain).collect(Collectors.toList());
+		entity.getTenants().stream().map(this::toDomain).forEach(building::addTenant);
 		return building;
 	}
 

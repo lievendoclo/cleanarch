@@ -24,6 +24,7 @@ import be.insaneprogramming.cleanarch.presenter.payloadmodel.ImmutableAddTenantT
 import be.insaneprogramming.cleanarch.presenter.payloadmodel.ImmutableCreateBuildingJsonPayload;
 import be.insaneprogramming.cleanarch.presenter.viewmodel.BuildingJson;
 import be.insaneprogramming.cleanarch.presenter.viewmodel.ImmutableBuildingJson;
+import be.insaneprogramming.cleanarch.presenter.viewmodel.ImmutableTenantJson;
 import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.ImmutableEvictTenantFromBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.ImmutableListBuildingsRequest;
@@ -56,7 +57,18 @@ public class BuildingResource {
 
 	@GetMapping
 	public ResponseEntity<List<BuildingJson>> list() {
-		List<BuildingJson> collect = listBuildings.execute(ImmutableListBuildingsRequest.builder().build()).stream().map(it -> ImmutableBuildingJson.builder().id(it.getId()).name(it.getName()).build()).collect(Collectors.toList());
+		List<BuildingJson> collect = listBuildings.execute(ImmutableListBuildingsRequest.builder().build())
+				.stream()
+				.map(it -> {
+					ImmutableBuildingJson.Builder builder = ImmutableBuildingJson.builder()
+							.id(it.getId())
+							.name(it.getName());
+					it.getTenants().forEach(t ->
+						builder.addTenants(ImmutableTenantJson.builder().id(t.getId()).name(t.getName()).build())
+					);
+					return builder.build();
+				})
+				.collect(Collectors.toList());
 		return ResponseEntity.ok(collect);
 	}
 

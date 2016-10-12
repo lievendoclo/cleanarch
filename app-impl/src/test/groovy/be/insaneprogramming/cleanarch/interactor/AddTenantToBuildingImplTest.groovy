@@ -1,10 +1,7 @@
 package be.insaneprogramming.cleanarch.interactor
 
 import be.insaneprogramming.cleanarch.boundary.AddTenantToBuilding
-import be.insaneprogramming.cleanarch.entity.Building
-import be.insaneprogramming.cleanarch.entity.ImmutableBuildingId
-import be.insaneprogramming.cleanarch.entity.Tenant
-import be.insaneprogramming.cleanarch.entity.TenantFactory
+import be.insaneprogramming.cleanarch.entity.*
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway
 import be.insaneprogramming.cleanarch.requestmodel.ImmutableAddTenantToBuildingRequest
 import spock.lang.Specification
@@ -26,6 +23,7 @@ class AddTenantToBuildingImplTest extends Specification {
 		buildingEntityGateway.findById(ImmutableBuildingId.of('buildingId')) >> building
 		def tenant = Mock(Tenant)
 		tenantFactory.createTenant('tenantName') >> tenant
+		tenant.getId() >> ImmutableTenantId.of("tenantId")
 
 		and:
 		def request = ImmutableAddTenantToBuildingRequest.builder().buildingId('buildingId').name('tenantName').build()

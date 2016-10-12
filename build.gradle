@@ -60,14 +60,25 @@ project(":infra-rest") {
 
 		compile "org.springframework:spring-webmvc"
 		compile "com.fasterxml.jackson.core:jackson-databind"
+
+		testCompile 'com.jayway.restassured:spring-mock-mvc:2.9.0'
+		testCompile 'javax.servlet:javax.servlet-api:3.1.0'
+		testCompile 'commons-logging:commons-logging:1.2'
 	}
 }
 
-project(":infra-db") {
+project(":infra-db-jpa") {
 	dependencies {
 		compile project(":domain")
 		compile "org.springframework.data:spring-data-jpa"
 		compile "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final"
+	}
+}
+
+project(":infra-mongodb") {
+	dependencies {
+		compile project(":domain")
+		compile 'org.mongodb.morphia:morphia:1.2.1'
 	}
 }
 
@@ -78,7 +89,8 @@ project(":springboot-deployment") {
 		compile project(":domain")
 		compile project(":app-api")
 		compile project(":app-impl")
-		compile project(":infra-db")
+		compile project(":infra-db-jpa")
+		compile project(":infra-mongodb")
 		compile project(":infra-rest")
 
 		compile "org.springframework.boot:spring-boot-starter-web"
@@ -86,6 +98,7 @@ project(":springboot-deployment") {
 		compile "org.springframework.boot:spring-boot-actuator"
 
 		compile "com.h2database:h2"
+		compile 'com.github.fakemongo:fongo:2.0.9'
 
 		testCompile "org.spockframework:spock-spring:1.1-groovy-2.4-rc-2"
 		testCompile "org.springframework.boot:spring-boot-starter-test"

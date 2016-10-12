@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Building {
-	public BuildingId id;
-	public String name;
-	public List<Tenant> tenants;
+	private BuildingId id;
+	private String name;
+	private List<Tenant> tenants;
 
 	public Building(BuildingId id, String name) {
+		this(id, name, new ArrayList<>());
+	}
+
+	public Building(BuildingId id, String name, List<Tenant> tenants) {
 		this.id = id;
 		this.name = name;
-		this.tenants = new ArrayList<>();
+		this.tenants = tenants;
 	}
 
 	public BuildingId getId() {
