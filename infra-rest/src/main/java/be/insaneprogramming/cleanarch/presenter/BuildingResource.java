@@ -5,8 +5,7 @@ import static be.insaneprogramming.cleanarch.presenter.BuildingResource.RESOURCE
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,14 +32,15 @@ import be.insaneprogramming.cleanarch.requestmodel.ImmutableListBuildingsRequest
 @RequestMapping(RESOURCE_URI_TEMPLATE)
 public class BuildingResource {
 	static final String RESOURCE_URI_TEMPLATE = "/building";
-	static final String GET_SINGLE_URI_TEMPLATE = RESOURCE_URI_TEMPLATE + "/{id}";
+	static final String GET_SINGLE_BUILDING_URI_TEMPLATE = RESOURCE_URI_TEMPLATE + "/{buildingId}";
+	static final String GET_BUILDING_TENANT_URI_TEMPLATE = GET_SINGLE_BUILDING_URI_TEMPLATE + "/tenant/{tenantId}";
 
 	private final ListBuildings listBuildings;
 	private final CreateBuilding createBuilding;
 	private final AddTenantToBuilding addTenantToBuilding;
 	private final EvictTenantFromBuilding evictTenantFromBuilding;
 
-	@Inject
+	@Autowired
 	public BuildingResource(ListBuildings listBuildings, CreateBuilding createBuilding, AddTenantToBuilding addTenantToBuilding, EvictTenantFromBuilding evictTenantFromBuilding) {
 		this.listBuildings = listBuildings;
 		this.createBuilding = createBuilding;
@@ -49,9 +49,9 @@ public class BuildingResource {
 	}
 
 	@PostMapping
-	public ResponseEntity create(@RequestBody ImmutableCreateBuildingJsonPayload payload) {
+	public ResponseEntity<Void> create(@RequestBody ImmutableCreateBuildingJsonPayload payload) {
 		String id = createBuilding.execute(payload.toRequest());
-		return ResponseEntity.created(new UriTemplate(GET_SINGLE_URI_TEMPLATE).expand(id).normalize()).build();
+		return ResponseEntity.created(new UriTemplate(GET_SINGLE_BUILDING_URI_TEMPLATE).expand(id).normalize()).build();
 	}
 
 	@GetMapping
@@ -61,8 +61,9 @@ public class BuildingResource {
 	}
 
 	@PostMapping("{buildingId}/tenant")
-	public void addTenant(@PathVariable("buildingId") String buildingId, @RequestBody ImmutableAddTenantToBuildingJsonPayload payload) {
-		addTenantToBuilding.execute(payload.toRequest(buildingId));
+	public ResponseEntity<Void> addTenant(@PathVariable("buildingId") String buildingId, @RequestBody ImmutableAddTenantToBuildingJsonPayload payload) {
+		String id = addTenantToBuilding.execute(payload.toRequest(buildingId));
+		return ResponseEntity.created(new UriTemplate(GET_BUILDING_TENANT_URI_TEMPLATE).expand(buildingId, id).normalize()).build();
 	}
 
 	@DeleteMapping("{buildingId}/tenant/{tenantId}")

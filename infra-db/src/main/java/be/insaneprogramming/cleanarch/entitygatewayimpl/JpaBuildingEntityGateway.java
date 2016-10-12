@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import be.insaneprogramming.cleanarch.entity.Building;
 import be.insaneprogramming.cleanarch.entity.BuildingFactory;
 import be.insaneprogramming.cleanarch.entity.BuildingId;
@@ -19,13 +16,11 @@ import be.insaneprogramming.cleanarch.entitygatewayimpl.jpa.BuildingJpaEntity;
 import be.insaneprogramming.cleanarch.entitygatewayimpl.jpa.BuildingJpaEntityRepository;
 import be.insaneprogramming.cleanarch.entitygatewayimpl.jpa.TenantJpaEntity;
 
-@Named
 public class JpaBuildingEntityGateway implements BuildingEntityGateway {
 	private BuildingJpaEntityRepository buildingJpaEntityRepository;
 	private BuildingFactory buildingFactory;
 	private TenantFactory tenantFactory;
 
-	@Inject
 	public JpaBuildingEntityGateway(BuildingJpaEntityRepository buildingJpaEntityRepository, BuildingFactory buildingFactory, TenantFactory tenantFactory) {
 		this.buildingJpaEntityRepository = buildingJpaEntityRepository;
 		this.buildingFactory = buildingFactory;

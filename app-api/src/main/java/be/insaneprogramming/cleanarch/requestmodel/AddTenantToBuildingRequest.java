@@ -4,6 +4,8 @@ import org.immutables.value.Value;
 
 @Value.Immutable
 public interface AddTenantToBuildingRequest {
-	String getName();
+	@Value.Parameter
 	String getBuildingId();
+	@Value.Parameter
+	String getName();
 }

@@ -2,9 +2,6 @@ package be.insaneprogramming.cleanarch.entity;
 
 import java.util.UUID;
 
-import javax.inject.Named;
-
-@Named
 public class BuildingFactory {
 
 	public Building createBuilding(BuildingId id, String name) {

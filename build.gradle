@@ -32,7 +32,6 @@ subprojects {
 	}
 
 	dependencies {
-		compile "javax.inject:javax.inject:1"
 		compileOnly "org.immutables:value:2.3.3:annotations"
 		apt "org.immutables:value:2.3.3"
 		testCompile "org.spockframework:spock-core:1.1-groovy-2.4-rc-2"
@@ -87,5 +86,10 @@ project(":springboot-deployment") {
 		compile "org.springframework.boot:spring-boot-actuator"
 
 		compile "com.h2database:h2"
+
+		testCompile "org.spockframework:spock-spring:1.1-groovy-2.4-rc-2"
+		testCompile "org.springframework.boot:spring-boot-starter-test"
 	}
+
+
 }
