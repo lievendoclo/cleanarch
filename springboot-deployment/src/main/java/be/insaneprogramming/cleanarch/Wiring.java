@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import com.github.fakemongo.Fongo;
+import com.mongodb.MongoClient;
 
 import be.insaneprogramming.cleanarch.boundary.AddTenantToBuilding;
 import be.insaneprogramming.cleanarch.boundary.CreateBuilding;
@@ -73,16 +74,20 @@ public class Wiring {
 	@Profile("mongodb")
 	public static class MongoConfiguration {
 		@Bean
-		public BuildingEntityGateway buildingEntityGateway() {
-			return new MongoDbBuildingEntityGateway(datastore());
+		public BuildingEntityGateway buildingEntityGateway(Datastore datastore) {
+			return new MongoDbBuildingEntityGateway(datastore);
 		}
 
 		@Bean
-		public Datastore datastore() {
+		public MongoClient mongo() {
+			return new Fongo("cleanarch").getMongo();
+		}
+
+		@Bean
+		public Datastore datastore(MongoClient mongoClient) {
 			Morphia morphia = new Morphia();
 			morphia.mapPackage("be.insaneprogramming.cleanarch.entitygatewayimpl.morphia");
-			Fongo fongo = new Fongo("cleanarch");
-			Datastore datastore = morphia.createDatastore(fongo.getMongo(), "cleanarch");
+			Datastore datastore = morphia.createDatastore(mongoClient, "cleanarch");
 			datastore.ensureIndexes();
 			return datastore;
 		}
