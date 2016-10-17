@@ -17,3 +17,13 @@ spring:
     exclude:
     - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
     - org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
+
+---
+
+spring:
+  profiles: jdbc
+  autoconfigure:
+    exclude:
+    - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+    - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+    - org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration

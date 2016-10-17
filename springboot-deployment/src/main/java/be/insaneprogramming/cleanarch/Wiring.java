@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
@@ -17,6 +19,7 @@ import be.insaneprogramming.cleanarch.boundary.ListBuildings;
 import be.insaneprogramming.cleanarch.entity.BuildingFactory;
 import be.insaneprogramming.cleanarch.entity.TenantFactory;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
+import be.insaneprogramming.cleanarch.entitygatewayimpl.JdbcBuildingEntityGateway;
 import be.insaneprogramming.cleanarch.entitygatewayimpl.JpaBuildingEntityGateway;
 import be.insaneprogramming.cleanarch.entitygatewayimpl.MongoDbBuildingEntityGateway;
 import be.insaneprogramming.cleanarch.entitygatewayimpl.jpa.BuildingJpaEntityRepository;
@@ -67,6 +70,15 @@ public class Wiring {
 		@Bean
 		public BuildingEntityGateway buildingEntityGateway(BuildingFactory buildingFactory, TenantFactory tenantFactory) {
 			return new JpaBuildingEntityGateway(buildingJpaEntityRepository, buildingFactory, tenantFactory);
+		}
+	}
+
+	@Configuration
+	@Profile("jdbc")
+	public static class JdbcConfiguration {
+		@Bean
+		public BuildingEntityGateway buildingEntityGateway(NamedParameterJdbcTemplate jdbcTemplate) {
+			return new JdbcBuildingEntityGateway(jdbcTemplate);
 		}
 	}
 

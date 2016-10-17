@@ -82,6 +82,13 @@ project(":infra-mongodb") {
 	}
 }
 
+project(":infra-db-jdbc") {
+	dependencies {
+		compile project(":domain")
+		compile 'org.springframework:spring-jdbc'
+	}
+}
+
 project(":springboot-deployment") {
 	apply plugin: "spring-boot"
 
@@ -90,6 +97,7 @@ project(":springboot-deployment") {
 		compile project(":app-api")
 		compile project(":app-impl")
 		compile project(":infra-db-jpa")
+		compile project(":infra-db-jdbc")
 		compile project(":infra-mongodb")
 		compile project(":infra-rest")
 

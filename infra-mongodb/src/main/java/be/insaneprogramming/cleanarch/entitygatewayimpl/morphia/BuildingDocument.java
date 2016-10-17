@@ -15,7 +15,6 @@ public class BuildingDocument {
 	private List<TenantDocument> tenants;
 
 	private BuildingDocument() {
-
 	}
 
 	public BuildingDocument(String id, String name, List<TenantDocument> tenants) {
