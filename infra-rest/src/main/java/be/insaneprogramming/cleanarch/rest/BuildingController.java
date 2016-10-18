@@ -19,10 +19,10 @@ import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.util.UriTemplate;
 
 import be.insaneprogramming.cleanarch.boundary.AddTenantToBuilding;
-import be.insaneprogramming.cleanarch.boundary.BuildingListPresenter;
 import be.insaneprogramming.cleanarch.boundary.CreateBuilding;
 import be.insaneprogramming.cleanarch.boundary.EvictTenantFromBuilding;
 import be.insaneprogramming.cleanarch.boundary.ListBuildings;
+import be.insaneprogramming.cleanarch.presenter.JsonBuildingListPresenter;
 import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.ImmutableEvictTenantFromBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.ImmutableListBuildingsRequest;
@@ -41,16 +41,12 @@ public class BuildingController {
 	private final CreateBuilding createBuilding;
 	private final AddTenantToBuilding addTenantToBuilding;
 	private final EvictTenantFromBuilding evictTenantFromBuilding;
-	private final BuildingListPresenter<List<BuildingJson>> buildingListPresenter;
-
 	@Autowired
-	public BuildingController(ListBuildings listBuildings, CreateBuilding createBuilding, AddTenantToBuilding addTenantToBuilding, EvictTenantFromBuilding evictTenantFromBuilding,
-			BuildingListPresenter<List<BuildingJson>> buildingListPresenter) {
+	public BuildingController(ListBuildings listBuildings, CreateBuilding createBuilding, AddTenantToBuilding addTenantToBuilding, EvictTenantFromBuilding evictTenantFromBuilding) {
 		this.listBuildings = listBuildings;
 		this.createBuilding = createBuilding;
 		this.addTenantToBuilding = addTenantToBuilding;
 		this.evictTenantFromBuilding = evictTenantFromBuilding;
-		this.buildingListPresenter = buildingListPresenter;
 	}
 
 	@PostMapping
@@ -62,7 +58,7 @@ public class BuildingController {
 	@GetMapping
 	public DeferredResult<ResponseEntity> list() {
 		DeferredResult<ResponseEntity> deferred = new DeferredResult<>();
-		CompletableFuture<List<BuildingJson>> responseModels = listBuildings.execute(ImmutableListBuildingsRequest.builder().build(), buildingListPresenter);
+		CompletableFuture<List<BuildingJson>> responseModels = listBuildings.execute(ImmutableListBuildingsRequest.builder().build(), new JsonBuildingListPresenter());
 		responseModels.whenComplete((buildingJsons, throwable) -> {
 			if(throwable != null) {
 				deferred.setResult(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(throwable.getMessage()));

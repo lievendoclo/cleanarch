@@ -29,7 +29,7 @@ class BuildingControllerTest extends Specification {
 		createBuilding = Mock()
 		addTenantToBuilding = Mock()
 		evictTenantFromBuilding = Mock()
-		buildingResource = new BuildingController(listBuildings, createBuilding, addTenantToBuilding, evictTenantFromBuilding, buildingListPresenter)
+		buildingResource = new BuildingController(listBuildings, createBuilding, addTenantToBuilding, evictTenantFromBuilding)
 		RestAssuredMockMvc.standaloneSetup(buildingResource);
 	}
 

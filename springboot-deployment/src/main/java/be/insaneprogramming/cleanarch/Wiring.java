@@ -28,8 +28,6 @@ import be.insaneprogramming.cleanarch.interactor.AddTenantToBuildingImpl;
 import be.insaneprogramming.cleanarch.interactor.CreateBuildingImpl;
 import be.insaneprogramming.cleanarch.interactor.EvictTenantFromBuildingImpl;
 import be.insaneprogramming.cleanarch.interactor.ListBuildingsImpl;
-import be.insaneprogramming.cleanarch.presenter.JsonBuildingListPresenter;
-import be.insaneprogramming.cleanarch.rest.BuildingController;
 
 @Configuration
 public class Wiring {
@@ -63,9 +61,6 @@ public class Wiring {
 	public TenantFactory tenantFactory() {
 		return new TenantFactory();
 	}
-
-	@Bean
-	public BuildingListPresenter buildingListPresenter() { return new JsonBuildingListPresenter();}
 
 	@Configuration
 	@Profile("jpa")
