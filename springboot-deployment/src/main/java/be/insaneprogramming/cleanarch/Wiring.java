@@ -6,13 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
 
 import be.insaneprogramming.cleanarch.boundary.AddTenantToBuilding;
+import be.insaneprogramming.cleanarch.boundary.BuildingListPresenter;
 import be.insaneprogramming.cleanarch.boundary.CreateBuilding;
 import be.insaneprogramming.cleanarch.boundary.EvictTenantFromBuilding;
 import be.insaneprogramming.cleanarch.boundary.ListBuildings;
@@ -27,6 +28,8 @@ import be.insaneprogramming.cleanarch.interactor.AddTenantToBuildingImpl;
 import be.insaneprogramming.cleanarch.interactor.CreateBuildingImpl;
 import be.insaneprogramming.cleanarch.interactor.EvictTenantFromBuildingImpl;
 import be.insaneprogramming.cleanarch.interactor.ListBuildingsImpl;
+import be.insaneprogramming.cleanarch.presenter.JsonBuildingListPresenter;
+import be.insaneprogramming.cleanarch.rest.BuildingController;
 
 @Configuration
 public class Wiring {
@@ -60,6 +63,9 @@ public class Wiring {
 	public TenantFactory tenantFactory() {
 		return new TenantFactory();
 	}
+
+	@Bean
+	public BuildingListPresenter buildingListPresenter() { return new JsonBuildingListPresenter();}
 
 	@Configuration
 	@Profile("jpa")

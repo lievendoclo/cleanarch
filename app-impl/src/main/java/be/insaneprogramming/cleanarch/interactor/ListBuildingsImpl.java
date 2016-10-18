@@ -2,8 +2,10 @@ package be.insaneprogramming.cleanarch.interactor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import be.insaneprogramming.cleanarch.boundary.BuildingListPresenter;
 import be.insaneprogramming.cleanarch.boundary.ListBuildings;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest;
@@ -19,22 +21,26 @@ public class ListBuildingsImpl implements ListBuildings {
 	}
 
 	@Override
-	public List<BuildingResponseModel> execute(ListBuildingsRequest request) {
-		if (request == null) {
-			throw new IllegalArgumentException("request should not be null");
-		}
-		List<BuildingResponseModel> response = new ArrayList<>();
-		buildingEntityGateway.findAll().forEach(b -> {
-					BuildingResponseModel buildingResponseModel = ImmutableBuildingResponseModel.builder()
-							.id(b.getId().get())
-							.name(b.getName())
-							.tenants(b.getTenants().stream().map(t ->
-									ImmutableTenantResponseModel.builder().id(t.getId().get()).name(t.getName()).build()
-							).collect(Collectors.toList()))
-							.build();
-					response.add(buildingResponseModel);
+	public <T> CompletableFuture<T> execute(ListBuildingsRequest request, BuildingListPresenter<T> buildingListPresenter) {
+		return CompletableFuture.supplyAsync(() -> {
+					if (request == null) {
+						throw new IllegalArgumentException("request should not be null");
+					}
+					List<BuildingResponseModel> response = new ArrayList<>();
+					buildingEntityGateway.findAll().forEach(b -> {
+								BuildingResponseModel buildingResponseModel = ImmutableBuildingResponseModel.builder()
+										.id(b.getId().get())
+										.name(b.getName())
+										.tenants(b.getTenants().stream().map(t ->
+												ImmutableTenantResponseModel.builder().id(t.getId().get()).name(t.getName()).build()
+										).collect(Collectors.toList()))
+										.build();
+								response.add(buildingResponseModel);
+							}
+					);
+					return buildingListPresenter.present(response);
 				}
 		);
-		return response;
+
 	}
 }

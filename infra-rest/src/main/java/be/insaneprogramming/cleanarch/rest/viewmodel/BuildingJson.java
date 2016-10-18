@@ -1,4 +1,4 @@
-package be.insaneprogramming.cleanarch.presenter.viewmodel;
+package be.insaneprogramming.cleanarch.rest.viewmodel;
 
 import java.util.List;
 

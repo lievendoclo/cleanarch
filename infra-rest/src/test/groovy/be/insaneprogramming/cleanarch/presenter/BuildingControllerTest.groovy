@@ -9,6 +9,7 @@ import be.insaneprogramming.cleanarch.requestmodel.ImmutableCreateBuildingReques
 import be.insaneprogramming.cleanarch.requestmodel.ImmutableEvictTenantFromBuildingRequest
 import be.insaneprogramming.cleanarch.requestmodel.ImmutableListBuildingsRequest
 import be.insaneprogramming.cleanarch.responsemodel.ImmutableBuildingResponseModel
+import be.insaneprogramming.cleanarch.rest.BuildingController
 import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
 import spock.lang.Specification
 
@@ -16,8 +17,8 @@ import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.get
 import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.given
 import static org.hamcrest.CoreMatchers.equalTo
 
-class BuildingResourceTest extends Specification {
-	BuildingResource buildingResource
+class BuildingControllerTest extends Specification {
+	BuildingController buildingResource
 	ListBuildings listBuildings
 	CreateBuilding createBuilding
 	AddTenantToBuilding addTenantToBuilding
@@ -28,7 +29,7 @@ class BuildingResourceTest extends Specification {
 		createBuilding = Mock()
 		addTenantToBuilding = Mock()
 		evictTenantFromBuilding = Mock()
-		buildingResource = new BuildingResource(listBuildings, createBuilding, addTenantToBuilding, evictTenantFromBuilding)
+		buildingResource = new BuildingController(listBuildings, createBuilding, addTenantToBuilding, evictTenantFromBuilding, buildingListPresenter)
 		RestAssuredMockMvc.standaloneSetup(buildingResource);
 	}
 

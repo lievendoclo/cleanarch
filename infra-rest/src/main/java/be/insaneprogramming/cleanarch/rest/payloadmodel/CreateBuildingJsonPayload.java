@@ -1,4 +1,4 @@
-package be.insaneprogramming.cleanarch.presenter.payloadmodel;
+package be.insaneprogramming.cleanarch.rest.payloadmodel;
 
 import org.immutables.value.Value;
 

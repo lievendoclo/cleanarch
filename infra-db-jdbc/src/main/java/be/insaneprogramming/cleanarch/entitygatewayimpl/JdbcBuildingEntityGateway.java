@@ -75,6 +75,11 @@ public class JdbcBuildingEntityGateway implements BuildingEntityGateway {
 
 	@Override
 	public List<Building> findAll() {
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		String query = "SELECT * FROM building";
 		Map<String, String> params = new HashMap<>();
 		return jdbcTemplate.query(query, params, (rs, rowNum) -> {
