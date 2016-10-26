@@ -10,8 +10,7 @@ import be.insaneprogramming.cleanarch.boundary.ListBuildings;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest;
 import be.insaneprogramming.cleanarch.responsemodel.BuildingResponseModel;
-import be.insaneprogramming.cleanarch.responsemodel.ImmutableBuildingResponseModel;
-import be.insaneprogramming.cleanarch.responsemodel.ImmutableTenantResponseModel;
+import be.insaneprogramming.cleanarch.responsemodel.TenantResponseModel;
 
 public class ListBuildingsImpl implements ListBuildings {
 	private BuildingEntityGateway buildingEntityGateway;
@@ -28,13 +27,12 @@ public class ListBuildingsImpl implements ListBuildings {
 					}
 					List<BuildingResponseModel> response = new ArrayList<>();
 					buildingEntityGateway.findAll().forEach(b -> {
-								BuildingResponseModel buildingResponseModel = ImmutableBuildingResponseModel.builder()
-										.id(b.getId().get())
-										.name(b.getName())
-										.tenants(b.getTenants().stream().map(t ->
-												ImmutableTenantResponseModel.builder().id(t.getId().get()).name(t.getName()).build()
-										).collect(Collectors.toList()))
-										.build();
+							String id = b.getId().getValue();
+							String name = b.getName();
+							List<TenantResponseModel> tenantResponseModels = b.getTenants().stream().map(t ->
+									new TenantResponseModel(t.getId().getValue(), t.getName())
+							).collect(Collectors.toList());
+								BuildingResponseModel buildingResponseModel = new BuildingResponseModel(id, name, tenantResponseModels);
 								response.add(buildingResponseModel);
 							}
 					);

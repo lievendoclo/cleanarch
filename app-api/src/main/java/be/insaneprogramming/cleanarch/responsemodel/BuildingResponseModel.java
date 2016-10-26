@@ -2,11 +2,26 @@ package be.insaneprogramming.cleanarch.responsemodel;
 
 import java.util.List;
 
-import org.immutables.value.Value;
+public final class BuildingResponseModel {
+	private final String id;
+	private final String name;
+	private final List<TenantResponseModel> tenants;
 
-@Value.Immutable
-public interface BuildingResponseModel {
-	String getId();
-	String getName();
-	List<TenantResponseModel> getTenants();
+	public BuildingResponseModel(String id, String name, List<TenantResponseModel> tenants) {
+		this.id = id;
+		this.name = name;
+		this.tenants = tenants;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public List<TenantResponseModel> getTenants() {
+		return tenants;
+	}
 }

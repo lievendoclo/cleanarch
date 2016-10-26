@@ -2,14 +2,26 @@ package be.insaneprogramming.cleanarch.rest.viewmodel;
 
 import java.util.List;
 
-import org.immutables.value.Value;
+public class BuildingJson {
+	private final String id;
+	private final String name;
+	private final List<TenantJson> tenants;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+	public BuildingJson(String id, String name, List<TenantJson> tenants) {
+		this.id = id;
+		this.name = name;
+		this.tenants = tenants;
+	}
 
-@Value.Immutable
-@JsonSerialize
-public interface BuildingJson {
-	String getId();
-	String getName();
-	List<TenantJson> getTenants();
+	public String getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public List<TenantJson> getTenants() {
+		return tenants;
+	}
 }

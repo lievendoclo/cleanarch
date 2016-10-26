@@ -1,9 +1,19 @@
 package be.insaneprogramming.cleanarch.rest.viewmodel;
 
-import org.immutables.value.Value;
+public class TenantJson {
+	private final String id;
+	private final String name;
 
-@Value.Immutable
-public interface TenantJson {
-	String getId();
-	String getName();
+	public TenantJson(String id, String name) {
+		this.id = id;
+		this.name = name;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
 }

@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
+import be.insaneprogramming.cleanarch.entity.BuildingId;
+
 @Entity
 public class BuildingJpaEntity {
 	@Id
@@ -17,27 +19,24 @@ public class BuildingJpaEntity {
 	@JoinColumn(name = "building_id")
 	private List<TenantJpaEntity> tenants;
 
-	public String getId() {
-		return id;
+	BuildingJpaEntity() {
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public BuildingJpaEntity(BuildingId id, String name, List<TenantJpaEntity> tenants) {
+		this.id = id.getValue();
+		this.name = name;
+		this.tenants = tenants;
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public List<TenantJpaEntity> getTenants() {
 		return tenants;
-	}
-
-	public void setTenants(List<TenantJpaEntity> tenants) {
-		this.tenants = tenants;
 	}
 }

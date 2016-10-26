@@ -1,7 +1,4 @@
 package be.insaneprogramming.cleanarch.requestmodel;
 
-import org.immutables.value.Value;
-
-@Value.Immutable
-public interface ListBuildingsRequest {
+public final class ListBuildingsRequest {
 }

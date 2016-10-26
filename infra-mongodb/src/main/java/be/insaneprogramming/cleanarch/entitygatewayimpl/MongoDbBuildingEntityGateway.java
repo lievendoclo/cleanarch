@@ -8,9 +8,8 @@ import org.mongodb.morphia.Datastore;
 
 import be.insaneprogramming.cleanarch.entity.Building;
 import be.insaneprogramming.cleanarch.entity.BuildingId;
-import be.insaneprogramming.cleanarch.entity.ImmutableBuildingId;
-import be.insaneprogramming.cleanarch.entity.ImmutableTenantId;
 import be.insaneprogramming.cleanarch.entity.Tenant;
+import be.insaneprogramming.cleanarch.entity.TenantId;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 import be.insaneprogramming.cleanarch.entitygatewayimpl.morphia.BuildingDocument;
 import be.insaneprogramming.cleanarch.entitygatewayimpl.morphia.TenantDocument;
@@ -29,11 +28,11 @@ public class MongoDbBuildingEntityGateway implements BuildingEntityGateway {
 	}
 
 	private BuildingDocument toDocument(Building building) {
-		return new BuildingDocument(building.getId().get(), building.getName(), building.getTenants().stream().map(this::toDocument).collect(Collectors.toList()));
+		return new BuildingDocument(building.getId().getValue(), building.getName(), building.getTenants().stream().map(this::toDocument).collect(Collectors.toList()));
 	}
 
 	private TenantDocument toDocument(Tenant tenant) {
-		return new TenantDocument(tenant.getId().get(), tenant.getName());
+		return new TenantDocument(tenant.getId().getValue(), tenant.getName());
 	}
 
 	@Override
@@ -43,15 +42,15 @@ public class MongoDbBuildingEntityGateway implements BuildingEntityGateway {
 
 	@Override
 	public Building findById(BuildingId id) {
-		return fromDocument(datastore.get(BuildingDocument.class, id.get()));
+		return fromDocument(datastore.get(BuildingDocument.class, id.getValue()));
 	}
 
 	private Building fromDocument(BuildingDocument document) {
-		return new Building(ImmutableBuildingId.of(document.getId()), document.getName(), document.getTenants() != null ? document.getTenants().stream().map(this::fromDocument).collect(Collectors.toList()) : new ArrayList<>());
+		return new Building(BuildingId.of(document.getId()), document.getName(), document.getTenants() != null ? document.getTenants().stream().map(this::fromDocument).collect(Collectors.toList()) : new ArrayList<>());
 	}
 
 	private Tenant fromDocument(TenantDocument document) {
-		return new Tenant(ImmutableTenantId.of(document.getId()), document.getName());
+		return new Tenant(TenantId.of(document.getId()), document.getName());
 
 	}
 }

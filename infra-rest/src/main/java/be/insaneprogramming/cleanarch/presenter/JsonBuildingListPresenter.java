@@ -6,8 +6,7 @@ import java.util.stream.Collectors;
 import be.insaneprogramming.cleanarch.boundary.BuildingListPresenter;
 import be.insaneprogramming.cleanarch.responsemodel.BuildingResponseModel;
 import be.insaneprogramming.cleanarch.rest.viewmodel.BuildingJson;
-import be.insaneprogramming.cleanarch.rest.viewmodel.ImmutableBuildingJson;
-import be.insaneprogramming.cleanarch.rest.viewmodel.ImmutableTenantJson;
+import be.insaneprogramming.cleanarch.rest.viewmodel.TenantJson;
 
 public class JsonBuildingListPresenter implements BuildingListPresenter<List<BuildingJson>> {
 	@Override
@@ -15,13 +14,8 @@ public class JsonBuildingListPresenter implements BuildingListPresenter<List<Bui
 		return buildingResponses
 				.stream()
 				.map(it -> {
-					ImmutableBuildingJson.Builder builder = ImmutableBuildingJson.builder()
-							.id(it.getId())
-							.name(it.getName());
-					it.getTenants().forEach(t ->
-							builder.addTenants(ImmutableTenantJson.builder().id(t.getId()).name(t.getName()).build())
-					);
-					return builder.build();
+					List<TenantJson> tenants = it.getTenants().stream().map(t -> new TenantJson(t.getId(), t.getName())).collect(Collectors.toList());
+					return new BuildingJson(it.getId(), it.getName(), tenants);
 				})
 				.collect(Collectors.toList());
 	}

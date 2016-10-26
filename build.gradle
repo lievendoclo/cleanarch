@@ -15,7 +15,6 @@ buildscript {
 subprojects {
 	apply plugin: "groovy"
 	apply plugin: 'io.spring.dependency-management'
-	apply plugin: "net.ltgt.apt"
 	apply plugin: "idea"
 
 	sourceCompatibility = 1.8
@@ -32,8 +31,6 @@ subprojects {
 	}
 
 	dependencies {
-		compileOnly "org.immutables:value:2.3.3:annotations"
-		apt "org.immutables:value:2.3.3"
 		testCompile "org.spockframework:spock-core:1.1-groovy-2.4-rc-2"
 		testCompile "org.codehaus.groovy:groovy-all:2.4.7"
 		testCompile 'cglib:cglib-nodep:3.2.4'

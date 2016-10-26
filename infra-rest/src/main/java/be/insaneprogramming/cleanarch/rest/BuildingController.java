@@ -24,10 +24,9 @@ import be.insaneprogramming.cleanarch.boundary.EvictTenantFromBuilding;
 import be.insaneprogramming.cleanarch.boundary.ListBuildings;
 import be.insaneprogramming.cleanarch.presenter.JsonBuildingListPresenter;
 import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequest;
-import be.insaneprogramming.cleanarch.requestmodel.ImmutableEvictTenantFromBuildingRequest;
-import be.insaneprogramming.cleanarch.requestmodel.ImmutableListBuildingsRequest;
-import be.insaneprogramming.cleanarch.rest.payloadmodel.ImmutableAddTenantToBuildingJsonPayload;
-import be.insaneprogramming.cleanarch.rest.payloadmodel.ImmutableCreateBuildingJsonPayload;
+import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest;
+import be.insaneprogramming.cleanarch.rest.payloadmodel.AddTenantToBuildingJsonPayload;
+import be.insaneprogramming.cleanarch.rest.payloadmodel.CreateBuildingJsonPayload;
 import be.insaneprogramming.cleanarch.rest.viewmodel.BuildingJson;
 
 @RestController
@@ -50,7 +49,7 @@ public class BuildingController {
 	}
 
 	@PostMapping
-	public ResponseEntity create(@RequestBody ImmutableCreateBuildingJsonPayload payload) {
+	public ResponseEntity create(@RequestBody CreateBuildingJsonPayload payload) {
 		String id = createBuilding.execute(payload.toRequest());
 		return ResponseEntity.created(new UriTemplate(GET_SINGLE_BUILDING_URI_TEMPLATE).expand(id).normalize()).build();
 	}
@@ -58,7 +57,7 @@ public class BuildingController {
 	@GetMapping
 	public DeferredResult<ResponseEntity> list() {
 		DeferredResult<ResponseEntity> deferred = new DeferredResult<>();
-		CompletableFuture<List<BuildingJson>> responseModels = listBuildings.execute(ImmutableListBuildingsRequest.builder().build(), new JsonBuildingListPresenter());
+		CompletableFuture<List<BuildingJson>> responseModels = listBuildings.execute(new ListBuildingsRequest(), new JsonBuildingListPresenter());
 		responseModels.whenComplete((buildingJsons, throwable) -> {
 			if(throwable != null) {
 				deferred.setResult(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(throwable.getMessage()));
@@ -70,17 +69,14 @@ public class BuildingController {
 	}
 
 	@PostMapping("{buildingId}/tenant")
-	public ResponseEntity addTenant(@PathVariable("buildingId") String buildingId, @RequestBody ImmutableAddTenantToBuildingJsonPayload payload) {
+	public ResponseEntity addTenant(@PathVariable("buildingId") String buildingId, @RequestBody AddTenantToBuildingJsonPayload payload) {
 		String id = addTenantToBuilding.execute(payload.toRequest(buildingId));
 		return ResponseEntity.created(new UriTemplate(GET_BUILDING_TENANT_URI_TEMPLATE).expand(buildingId, id).normalize()).build();
 	}
 
 	@DeleteMapping("{buildingId}/tenant/{tenantId}")
 	public void evictTenant(@PathVariable("buildingId") String buildingId, @PathVariable("tenantId") String tenantId) {
-		EvictTenantFromBuildingRequest request = ImmutableEvictTenantFromBuildingRequest.builder()
-			.buildingId(buildingId)
-			.tenantId(tenantId)
-			.build();
+		EvictTenantFromBuildingRequest request = new EvictTenantFromBuildingRequest(buildingId, tenantId);
 		evictTenantFromBuilding.execute(request);
 	}
 }

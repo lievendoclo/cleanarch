@@ -9,6 +9,6 @@ public class BuildingFactory {
 	}
 
 	public Building createBuilding(String name) {
-		return createBuilding(ImmutableBuildingId.of(UUID.randomUUID().toString()), name);
+		return createBuilding(BuildingId.of(UUID.randomUUID().toString()), name);
 	}
 }

@@ -8,6 +8,6 @@ public class TenantFactory {
 	}
 
 	public Tenant createTenant(String name) {
-		return createTenant(ImmutableTenantId.of(UUID.randomUUID().toString()), name);
+		return createTenant(TenantId.of(UUID.randomUUID().toString()), name);
 	}
 }

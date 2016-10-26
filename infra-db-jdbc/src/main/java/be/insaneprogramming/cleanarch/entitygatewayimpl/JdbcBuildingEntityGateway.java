@@ -9,9 +9,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import be.insaneprogramming.cleanarch.entity.Building;
 import be.insaneprogramming.cleanarch.entity.BuildingId;
-import be.insaneprogramming.cleanarch.entity.ImmutableBuildingId;
-import be.insaneprogramming.cleanarch.entity.ImmutableTenantId;
 import be.insaneprogramming.cleanarch.entity.Tenant;
+import be.insaneprogramming.cleanarch.entity.TenantId;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 
 public class JdbcBuildingEntityGateway implements BuildingEntityGateway {
@@ -34,21 +33,21 @@ public class JdbcBuildingEntityGateway implements BuildingEntityGateway {
 	private String insert(Building building) {
 		String query = "INSERT INTO building(id, name) VALUES (:id, :name)";
 		Map<String, String> params = new HashMap<>();
-		params.put("id", building.getId().get());
+		params.put("id", building.getId().getValue());
 		params.put("name", building.getName());
 		jdbcTemplate.update(query, params);
 		saveTenants(building);
-		return building.getId().get();
+		return building.getId().getValue();
 	}
 
 	private String update(Building building) {
 		String query = "UPDATE building SET name = :name WHERE id = :id";
 		Map<String, String> params = new HashMap<>();
-		params.put("id", building.getId().get());
+		params.put("id", building.getId().getValue());
 		params.put("name", building.getName());
 		jdbcTemplate.update(query, params);
 		saveTenants(building);
-		return building.getId().get();
+		return building.getId().getValue();
 	}
 
 	private void saveTenants(Building building) {
@@ -59,31 +58,26 @@ public class JdbcBuildingEntityGateway implements BuildingEntityGateway {
 	private void deleteAllTenants(BuildingId buildingId) {
 		String query = "DELETE FROM tenant WHERE buildingId = :buildingId";
 		Map<String, String> params = new HashMap<>();
-		params.put("buildingId", buildingId.get());
+		params.put("buildingId", buildingId.getValue());
 		jdbcTemplate.update(query, params);
 	}
 
 	private String insert(BuildingId buildingId, Tenant tenant) {
 		String query = "INSERT INTO tenant (id, name, buildingId) VALUES (:id, :name, :buildingId)";
 		Map<String, String> params = new HashMap<>();
-		params.put("id", tenant.getId().get());
+		params.put("id", tenant.getId().getValue());
 		params.put("name", tenant.getName());
-		params.put("buildingId", buildingId.get());
+		params.put("buildingId", buildingId.getValue());
 		jdbcTemplate.update(query, params);
-		return tenant.getId().get();
+		return tenant.getId().getValue();
 	}
 
 	@Override
 	public List<Building> findAll() {
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		String query = "SELECT * FROM building";
 		Map<String, String> params = new HashMap<>();
 		return jdbcTemplate.query(query, params, (rs, rowNum) -> {
-			ImmutableBuildingId id = ImmutableBuildingId.of(rs.getString("id"));
+			BuildingId id = BuildingId.of(rs.getString("id"));
 			return new Building(id, rs.getString("name"), findByBuildingId(id));
 		});
 	}
@@ -92,14 +86,14 @@ public class JdbcBuildingEntityGateway implements BuildingEntityGateway {
 	public Building findById(BuildingId id) {
 		String query = "SELECT * FROM building WHERE id = :id";
 		Map<String, String> params = new HashMap<>();
-		params.put("id", id.get());
-		return jdbcTemplate.queryForObject(query, params, (rs, rowNum) -> new Building(ImmutableBuildingId.of(rs.getString("id")), rs.getString("name")));
+		params.put("id", id.getValue());
+		return jdbcTemplate.queryForObject(query, params, (rs, rowNum) -> new Building(BuildingId.of(rs.getString("id")), rs.getString("name")));
 	}
 
 	private List<Tenant> findByBuildingId(BuildingId buildingId) {
 		String query = "SELECT * FROM tenant WHERE buildingId = :buildingId";
 		Map<String, String> params = new HashMap<>();
-		params.put("buildingId", buildingId.get());
-		return jdbcTemplate.query(query, params, (rs, rowNum) -> new Tenant(ImmutableTenantId.of(rs.getString("id")), rs.getString("name")));
+		params.put("buildingId", buildingId.getValue());
+		return jdbcTemplate.query(query, params, (rs, rowNum) -> new Tenant(TenantId.of(rs.getString("id")), rs.getString("name")));
 	}
 }

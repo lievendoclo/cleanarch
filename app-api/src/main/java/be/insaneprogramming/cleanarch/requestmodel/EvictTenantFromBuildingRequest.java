@@ -1,11 +1,19 @@
 package be.insaneprogramming.cleanarch.requestmodel;
 
-import org.immutables.value.Value;
+public final class EvictTenantFromBuildingRequest {
+	private final String buildingId;
+	private final String tenantId;
 
-@Value.Immutable
-public interface EvictTenantFromBuildingRequest {
-	@Value.Parameter
-	String getBuildingId();
-	@Value.Parameter
-	String getTenantId();
+	public EvictTenantFromBuildingRequest(String buildingId, String tenantId) {
+		this.buildingId = buildingId;
+		this.tenantId = tenantId;
+	}
+
+	public String getBuildingId() {
+		return buildingId;
+	}
+
+	public String getTenantId() {
+		return tenantId;
+	}
 }

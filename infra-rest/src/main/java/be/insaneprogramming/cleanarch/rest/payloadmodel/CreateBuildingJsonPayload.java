@@ -1,18 +1,19 @@
 package be.insaneprogramming.cleanarch.rest.payloadmodel;
 
-import org.immutables.value.Value;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest;
-import be.insaneprogramming.cleanarch.requestmodel.ImmutableCreateBuildingRequest;
 
-@Value.Immutable
-@JsonDeserialize
-public interface CreateBuildingJsonPayload {
-	String getName();
+public final class CreateBuildingJsonPayload {
+	private final String name;
 
-	default CreateBuildingRequest toRequest() {
-		return ImmutableCreateBuildingRequest.builder().name(getName()).build();
+	@JsonCreator
+	public CreateBuildingJsonPayload(@JsonProperty("name") String name) {
+		this.name = name;
+	}
+
+	public CreateBuildingRequest toRequest() {
+		return new CreateBuildingRequest(name);
 	}
 }
