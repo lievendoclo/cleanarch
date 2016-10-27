@@ -1,0 +1,3 @@
+package be.insaneprogramming.cleanarch.requestmodel
+
+class ListBuildingsRequest
