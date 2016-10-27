@@ -1,10 +1,11 @@
 package be.insaneprogramming.cleanarch.interactor
 
+import be.insaneprogramming.cleanarch.boundary.BuildingListPresenter
 import be.insaneprogramming.cleanarch.boundary.ListBuildings
 import be.insaneprogramming.cleanarch.entity.Building
-import be.insaneprogramming.cleanarch.entity.ImmutableBuildingId
+import be.insaneprogramming.cleanarch.entity.BuildingId
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway
-import be.insaneprogramming.cleanarch.requestmodel.ImmutableListBuildingsRequest
+import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest
 import spock.lang.Specification
 
 class ListBuildingsImplTest extends Specification {
@@ -18,11 +19,11 @@ class ListBuildingsImplTest extends Specification {
 
 	def "test execute"() {
 		given:
-		def buildings = [new Building(ImmutableBuildingId.of('one'), 'testOne'), new Building(ImmutableBuildingId.of('two'), 'testTwo')]
+		def buildings = [new Building(BuildingId.of('one'), 'testOne'), new Building(BuildingId.of('two'), 'testTwo')]
 		buildingEntityGateway.findAll() >> buildings
 
 		when:
-		def response = listBuildings.execute(ImmutableListBuildingsRequest.builder().build())
+		def response = listBuildings.execute(new ListBuildingsRequest(), {buildingResponses -> buildingResponses } as BuildingListPresenter).get()
 
 		then:
 		response.size() == 2
@@ -35,7 +36,7 @@ class ListBuildingsImplTest extends Specification {
 		def request = null
 
 		when:
-		listBuildings.execute(request)
+		listBuildings.execute(request, null)
 
 		then:
 		thrown(IllegalArgumentException)

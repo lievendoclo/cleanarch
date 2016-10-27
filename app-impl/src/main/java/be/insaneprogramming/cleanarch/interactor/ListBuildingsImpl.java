@@ -21,10 +21,10 @@ public class ListBuildingsImpl implements ListBuildings {
 
 	@Override
 	public <T> CompletableFuture<T> execute(ListBuildingsRequest request, BuildingListPresenter<T> buildingListPresenter) {
+		if (request == null) {
+			throw new IllegalArgumentException("request should not be null");
+		}
 		return CompletableFuture.supplyAsync(() -> {
-					if (request == null) {
-						throw new IllegalArgumentException("request should not be null");
-					}
 					List<BuildingResponseModel> response = new ArrayList<>();
 					buildingEntityGateway.findAll().forEach(b -> {
 							String id = b.getId().getValue();

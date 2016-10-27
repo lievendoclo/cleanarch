@@ -4,16 +4,20 @@ import be.insaneprogramming.cleanarch.boundary.AddTenantToBuilding
 import be.insaneprogramming.cleanarch.boundary.CreateBuilding
 import be.insaneprogramming.cleanarch.boundary.EvictTenantFromBuilding
 import be.insaneprogramming.cleanarch.boundary.ListBuildings
-import be.insaneprogramming.cleanarch.requestmodel.ImmutableAddTenantToBuildingRequest
-import be.insaneprogramming.cleanarch.requestmodel.ImmutableCreateBuildingRequest
-import be.insaneprogramming.cleanarch.requestmodel.ImmutableEvictTenantFromBuildingRequest
-import be.insaneprogramming.cleanarch.requestmodel.ImmutableListBuildingsRequest
-import be.insaneprogramming.cleanarch.responsemodel.ImmutableBuildingResponseModel
+import be.insaneprogramming.cleanarch.requestmodel.AddTenantToBuildingRequest
+import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest
+import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequest
+import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest
+import be.insaneprogramming.cleanarch.responsemodel.BuildingResponseModel
 import be.insaneprogramming.cleanarch.rest.BuildingController
 import com.jayway.restassured.module.mockmvc.RestAssuredMockMvc
+import com.jayway.restassured.module.mockmvc.config.AsyncConfig
 import spock.lang.Specification
 
-import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.get
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
+import java.util.function.Supplier
+
 import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.given
 import static org.hamcrest.CoreMatchers.equalTo
 
@@ -31,14 +35,20 @@ class BuildingControllerTest extends Specification {
 		evictTenantFromBuilding = Mock()
 		buildingResource = new BuildingController(listBuildings, createBuilding, addTenantToBuilding, evictTenantFromBuilding)
 		RestAssuredMockMvc.standaloneSetup(buildingResource);
+		RestAssuredMockMvc.config().asyncConfig(AsyncConfig.withTimeout(1000, TimeUnit.MILLISECONDS));
 	}
 
 	def "returns a list of buildings"() {
 		given:
-		listBuildings.execute(ImmutableListBuildingsRequest.builder().build()) >> [ImmutableBuildingResponseModel.builder().id("testId").name("testName").build()]
+		listBuildings.execute(_ as ListBuildingsRequest, _ as JsonBuildingListPresenter) >> CompletableFuture.supplyAsync(new Supplier() {
+			@Override
+			Object get() {
+				[new BuildingResponseModel('testId', "testName", [])]
+			}
+		})
 
 		when:
-		def response = get("/building").then()
+		def response = given().when().async().get("/building").then()
 
 		then:
 		response.log().all(true)
@@ -50,7 +60,7 @@ class BuildingControllerTest extends Specification {
 
 	def "create a building"() {
 		given:
-		createBuilding.execute(ImmutableCreateBuildingRequest.of('test')) >> "testId"
+		createBuilding.execute(new CreateBuildingRequest('test')) >> "testId"
 
 		when:
 		def response = given()
@@ -72,7 +82,7 @@ class BuildingControllerTest extends Specification {
 		then:
 		response.log().all(true)
 		response.statusCode(200)
-		1 * evictTenantFromBuilding.execute(ImmutableEvictTenantFromBuildingRequest.of('testId', 'tenantId'))
+		1 * evictTenantFromBuilding.execute(new EvictTenantFromBuildingRequest('testId', 'tenantId'))
 	}
 
 	def "add a tenant to a building"() {
@@ -85,6 +95,6 @@ class BuildingControllerTest extends Specification {
 		then:
 		response.log().all(true)
 		response.statusCode(201)
-		1 * addTenantToBuilding.execute(ImmutableAddTenantToBuildingRequest.of('testId', 'test'))
+		1 * addTenantToBuilding.execute(new AddTenantToBuildingRequest('testId', 'test'))
 	}
 }
