@@ -4,7 +4,7 @@ import be.insaneprogramming.cleanarch.boundary.CreateBuilding
 import be.insaneprogramming.cleanarch.entity.Building
 import be.insaneprogramming.cleanarch.entity.BuildingFactory
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway
-import be.insaneprogramming.cleanarch.requestmodel.ImmutableCreateBuildingRequest
+import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest
 import spock.lang.Specification
 
 class CreateBuildingImplTest extends Specification {
@@ -25,7 +25,7 @@ class CreateBuildingImplTest extends Specification {
 		buildingEntityGateway.save(createdBuilding) >> 'testId'
 
 		and:
-		def request = ImmutableCreateBuildingRequest.builder().name('testBuilding').build()
+		def request = new CreateBuildingRequest("testBuilding")
 
 		when:
 		def response = createBuilding.execute(request)
