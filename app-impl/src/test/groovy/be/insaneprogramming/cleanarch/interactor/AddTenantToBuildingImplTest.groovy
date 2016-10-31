@@ -13,17 +13,14 @@ class AddTenantToBuildingImplTest extends Specification {
 
 	def setup() {
 		buildingEntityGateway = Mock()
-		tenantFactory = Mock()
+		tenantFactory = new TenantFactory()
 		addTenantToBuilding = new AddTenantToBuildingImpl(buildingEntityGateway, tenantFactory)
 	}
 
 	def "should add tenant to building"() {
 		given:
-		def building = Mock(Building)
-		buildingEntityGateway.findById(BuildingId.of('buildingId')) >> building
-		def tenant = Mock(Tenant)
-		tenantFactory.createTenant('tenantName') >> tenant
-		tenant.getId() >> TenantId.of("tenantId")
+		def building = new Building("buildingId", "test", [])
+		buildingEntityGateway.findById('buildingId') >> building
 
 		and:
 		def request = new AddTenantToBuildingRequest('buildingId','tenantName')
@@ -32,7 +29,7 @@ class AddTenantToBuildingImplTest extends Specification {
 		addTenantToBuilding.execute(request)
 
 		then:
-		1 * building.addTenant(tenant)
+		building.tenants.size() == 1
 	}
 
 	def "request should not be null"() {

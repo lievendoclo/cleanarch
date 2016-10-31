@@ -1,7 +1,6 @@
 package be.insaneprogramming.cleanarch.interactor
 
 import be.insaneprogramming.cleanarch.boundary.CreateBuilding
-import be.insaneprogramming.cleanarch.entity.Building
 import be.insaneprogramming.cleanarch.entity.BuildingFactory
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway
 import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest
@@ -14,24 +13,20 @@ class CreateBuildingImplTest extends Specification {
 
 	def setup() {
 		buildingEntityGateway = Mock()
-		buildingFactory = Mock()
+		buildingFactory = new BuildingFactory()
 		createBuilding = new CreateBuildingImpl(buildingEntityGateway, buildingFactory)
 	}
 
 	def "should create building"() {
 		given:
-		def createdBuilding = Mock(Building)
-		buildingFactory.createBuilding('testBuilding') >> createdBuilding
-		buildingEntityGateway.save(createdBuilding) >> 'testId'
-
-		and:
 		def request = new CreateBuildingRequest("testBuilding")
+		buildingEntityGateway.save(_) >> "testId"
 
 		when:
 		def response = createBuilding.execute(request)
 
 		then:
-		response == 'testId'
+		response != null
 	}
 
 	def "request should not be null"() {
