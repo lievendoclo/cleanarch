@@ -8,6 +8,6 @@ class TenantFactory {
     }
 
     fun createTenant(name: String): Tenant {
-        return createTenant(UUID.randomUUID().toString(), name)
+        return createTenant(TenantId(UUID.randomUUID().toString()), name)
     }
 }

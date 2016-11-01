@@ -10,7 +10,7 @@ buildscript {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.1.RELEASE")
 		classpath 'io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE'
 		classpath "net.ltgt.gradle:gradle-apt-plugin:0.7"
-		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-M02"
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.4"
 	}
 }
 
@@ -35,7 +35,7 @@ subprojects {
 	}
 
 	dependencies {
-		compile "org.jetbrains.kotlin:kotlin-stdlib:1.1-M02"
+		compile "org.jetbrains.kotlin:kotlin-stdlib:1.0.4"
 		testCompile "org.spockframework:spock-core:1.1-groovy-2.4-rc-2"
 		testCompile "org.codehaus.groovy:groovy-all:2.4.7"
 		testCompile 'cglib:cglib-nodep:3.2.4'

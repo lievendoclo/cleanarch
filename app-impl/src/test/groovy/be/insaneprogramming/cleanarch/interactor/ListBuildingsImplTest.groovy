@@ -3,7 +3,7 @@ package be.insaneprogramming.cleanarch.interactor
 import be.insaneprogramming.cleanarch.boundary.BuildingListPresenter
 import be.insaneprogramming.cleanarch.boundary.ListBuildings
 import be.insaneprogramming.cleanarch.entity.Building
-
+import be.insaneprogramming.cleanarch.entity.BuildingId
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway
 import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest
 import spock.lang.Specification
@@ -19,7 +19,7 @@ class ListBuildingsImplTest extends Specification {
 
 	def "test execute"() {
 		given:
-		def buildings = [new Building('one', 'testOne', []), new Building('two', 'testTwo', [])]
+		def buildings = [new Building(new BuildingId('one'), 'testOne', []), new Building(new BuildingId('two'), 'testTwo', [])]
 		buildingEntityGateway.findAll() >> buildings
 
 		when:

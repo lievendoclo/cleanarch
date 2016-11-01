@@ -19,8 +19,8 @@ class AddTenantToBuildingImplTest extends Specification {
 
 	def "should add tenant to building"() {
 		given:
-		def building = new Building("buildingId", "test", [])
-		buildingEntityGateway.findById('buildingId') >> building
+		def building = new Building(new BuildingId("buildingId"), "test", [])
+		buildingEntityGateway.findById(new BuildingId('buildingId')) >> building
 
 		and:
 		def request = new AddTenantToBuildingRequest('buildingId','tenantName')

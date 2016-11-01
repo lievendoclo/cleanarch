@@ -1,9 +1,7 @@
 package be.insaneprogramming.cleanarch.interactor
 
 import be.insaneprogramming.cleanarch.boundary.EvictTenantFromBuilding
-import be.insaneprogramming.cleanarch.entity.Building
-import be.insaneprogramming.cleanarch.entity.BuildingFactory
-import be.insaneprogramming.cleanarch.entity.Tenant
+import be.insaneprogramming.cleanarch.entity.*
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway
 import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequest
 import spock.lang.Specification
@@ -21,8 +19,8 @@ class EvictTenantFromBuildingImplTest extends Specification {
 
 	def "should evict tenant from building"() {
 		given:
-		def building = new Building("buildingId", "testBuilding", [new Tenant("tenantId", "tenantName")])
-		buildingEntityGateway.findById('buildingId') >> building
+		def building = new Building(new BuildingId("buildingId"), "testBuilding", [new Tenant(new TenantId("tenantId"), "tenantName")])
+		buildingEntityGateway.findById(new BuildingId('buildingId')) >> building
 
 		and:
 		def request = new EvictTenantFromBuildingRequest('buildingId','tenantId')

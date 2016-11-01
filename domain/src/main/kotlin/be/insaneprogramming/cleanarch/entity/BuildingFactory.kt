@@ -9,6 +9,6 @@ class BuildingFactory {
     }
 
     fun createBuilding(name: String): Building {
-        return createBuilding(UUID.randomUUID().toString(), name)
+        return createBuilding(BuildingId(UUID.randomUUID().toString()), name)
     }
 }

@@ -3,6 +3,7 @@ package be.insaneprogramming.cleanarch.entitygatewayimpl
 import be.insaneprogramming.cleanarch.entity.Building
 import be.insaneprogramming.cleanarch.entity.BuildingId
 import be.insaneprogramming.cleanarch.entity.Tenant
+import be.insaneprogramming.cleanarch.entity.TenantId
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway
 import org.springframework.dao.DataAccessException
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -23,21 +24,21 @@ class JdbcBuildingEntityGateway(private val jdbcTemplate: NamedParameterJdbcTemp
     private fun insert(building: Building): String {
         val query = "INSERT INTO building(id, name) VALUES (:id, :name)"
         val params = HashMap<String, String>()
-        params.put("id", building.id)
+        params.put("id", building.id.value)
         params.put("name", building.name)
         jdbcTemplate.update(query, params)
         saveTenants(building)
-        return building.id
+        return building.id.value
     }
 
     private fun update(building: Building): String {
         val query = "UPDATE building SET name = :name WHERE id = :id"
         val params = HashMap<String, String>()
-        params.put("id", building.id)
+        params.put("id", building.id.value)
         params.put("name", building.name)
         jdbcTemplate.update(query, params)
         saveTenants(building)
-        return building.id
+        return building.id.value
     }
 
     private fun saveTenants(building: Building) {
@@ -48,18 +49,18 @@ class JdbcBuildingEntityGateway(private val jdbcTemplate: NamedParameterJdbcTemp
     private fun deleteAllTenants(buildingId: BuildingId) {
         val query = "DELETE FROM tenant WHERE buildingId = :buildingId"
         val params = HashMap<String, String>()
-        params.put("buildingId", buildingId)
+        params.put("buildingId", buildingId.value)
         jdbcTemplate.update(query, params)
     }
 
     private fun insert(buildingId: BuildingId, tenant: Tenant): String {
         val query = "INSERT INTO tenant (id, name, buildingId) VALUES (:id, :name, :buildingId)"
         val params = HashMap<String, String>()
-        params.put("id", tenant.id)
+        params.put("id", tenant.id.value)
         params.put("name", tenant.name)
-        params.put("buildingId", buildingId)
+        params.put("buildingId", buildingId.value)
         jdbcTemplate.update(query, params)
-        return tenant.id
+        return tenant.id.value
     }
 
     override fun findAll(): List<Building> {
@@ -67,21 +68,21 @@ class JdbcBuildingEntityGateway(private val jdbcTemplate: NamedParameterJdbcTemp
         val params = HashMap<String, String>()
         return jdbcTemplate.query(query, params) { rs, rowNum ->
             val id = rs.getString("id")
-            Building(id, rs.getString("name"), findByBuildingId(id))
+            Building(BuildingId(id), rs.getString("name"), findByBuildingId(BuildingId(id)))
         }
     }
 
     override fun findById(id: BuildingId): Building {
         val query = "SELECT * FROM building WHERE id = :id"
         val params = HashMap<String, String>()
-        params.put("id", id)
-        return jdbcTemplate.queryForObject(query, params) { rs, rowNum -> Building(rs.getString("id"), rs.getString("name")) }
+        params.put("id", id.value)
+        return jdbcTemplate.queryForObject(query, params) { rs, rowNum -> Building(BuildingId(rs.getString("id")), rs.getString("name")) }
     }
 
     private fun findByBuildingId(buildingId: BuildingId): MutableList<Tenant> {
         val query = "SELECT * FROM tenant WHERE buildingId = :buildingId"
         val params = HashMap<String, String>()
-        params.put("buildingId", buildingId)
-        return jdbcTemplate.query(query, params) { rs, rowNum -> Tenant(rs.getString("id"), rs.getString("name")) }
+        params.put("buildingId", buildingId.value)
+        return jdbcTemplate.query(query, params) { rs, rowNum -> Tenant(TenantId(rs.getString("id")), rs.getString("name")) }
     }
 }
