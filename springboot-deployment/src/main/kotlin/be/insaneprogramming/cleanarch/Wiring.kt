@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Profile
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.github.fakemongo.Fongo
 import com.mongodb.MongoClient
 
@@ -62,12 +61,12 @@ open class Wiring {
         return TenantFactory()
     }
 
-    @Bean
-    open fun objectMapper(): ObjectMapper {
-        val mapper = ObjectMapper()
-        mapper.registerModule(KotlinModule())
-        return mapper
-    }
+//    @Bean
+//    open fun objectMapper(): ObjectMapper {
+//        val mapper = ObjectMapper()
+//        mapper.registerModule(KotlinModule())
+//        return mapper
+//    }
 
     @Configuration
     @Profile("jpa")

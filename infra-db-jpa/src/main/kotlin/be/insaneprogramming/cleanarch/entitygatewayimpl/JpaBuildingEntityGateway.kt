@@ -20,31 +20,31 @@ class JpaBuildingEntityGateway(private val buildingJpaEntityRepository: Building
     }
 
     override fun findById(id: BuildingId): Building {
-        return toDomain(buildingJpaEntityRepository.findOne(id.value))
+        return toDomain(buildingJpaEntityRepository.findOne(id))
     }
 
     private fun fromDomain(building: Building): BuildingJpaEntity {
         return BuildingJpaEntity(
-                building.id.value,
+                building.id,
                 building.name,
                 building.tenants.map { fromDomain(it) }
         )
     }
 
     private fun toDomain(entity: BuildingJpaEntity): Building {
-        val building = buildingFactory.createBuilding(BuildingId(entity.id), entity.name)
+        val building = buildingFactory.createBuilding(entity.id, entity.name)
         entity.tenants.map { toDomain(it) }.forEach { building.addTenant(it) }
         return building
     }
 
     private fun fromDomain(tenant: Tenant): TenantJpaEntity {
         return TenantJpaEntity(
-                tenant.id.value,
+                tenant.id,
                 tenant.name
         )
     }
 
     private fun toDomain(entity: TenantJpaEntity): Tenant {
-        return tenantFactory.createTenant(TenantId(entity.id), entity.name)
+        return tenantFactory.createTenant(entity.id, entity.name)
     }
 }

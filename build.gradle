@@ -1,6 +1,6 @@
 buildscript {
 	repositories {
-		mavenCentral()
+		jcenter()
 		maven {
 			url "https://plugins.gradle.org/m2/"
 		}
@@ -10,7 +10,7 @@ buildscript {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.1.RELEASE")
 		classpath 'io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE'
 		classpath "net.ltgt.gradle:gradle-apt-plugin:0.7"
-		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.4"
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1-M02"
 	}
 }
 
@@ -24,7 +24,7 @@ subprojects {
 	targetCompatibility = 1.8
 
 	repositories {
-		mavenCentral()
+		jcenter()
 		maven { url ='https://dl.bintray.com/kotlin/kotlin-eap-1.1' }
 	}
 
@@ -35,7 +35,7 @@ subprojects {
 	}
 
 	dependencies {
-		compile "org.jetbrains.kotlin:kotlin-stdlib:1.0.4"
+		compile "org.jetbrains.kotlin:kotlin-stdlib:1.1-M02"
 		testCompile "org.spockframework:spock-core:1.1-groovy-2.4-rc-2"
 		testCompile "org.codehaus.groovy:groovy-all:2.4.7"
 		testCompile 'cglib:cglib-nodep:3.2.4'
@@ -62,7 +62,7 @@ project(":infra-rest") {
 
 		compile "org.springframework:spring-webmvc"
 		compile "com.fasterxml.jackson.core:jackson-databind"
-		compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.8.4"
+//		compile "com.fasterxml.jackson.module:jackson-module-kotlin"
 
 		testCompile 'com.jayway.restassured:spring-mock-mvc:2.9.0'
 		testCompile 'javax.servlet:javax.servlet-api:3.1.0'

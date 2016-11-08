@@ -5,6 +5,8 @@ import be.insaneprogramming.cleanarch.boundary.CreateBuilding
 import be.insaneprogramming.cleanarch.boundary.EvictTenantFromBuilding
 import be.insaneprogramming.cleanarch.boundary.ListBuildings
 import be.insaneprogramming.cleanarch.presenter.JsonBuildingListPresenter
+import be.insaneprogramming.cleanarch.requestmodel.AddTenantToBuildingRequest
+import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest
 import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequest
 import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest
 import be.insaneprogramming.cleanarch.rest.BuildingController.Companion.RESOURCE_URI_TEMPLATE
@@ -34,7 +36,7 @@ class BuildingController(
 
     @PostMapping
     fun create(@RequestBody payload: CreateBuildingJsonPayload): ResponseEntity<*> {
-        val id = createBuilding.execute(payload.toRequest())
+        val id = createBuilding.execute(CreateBuildingRequest(payload.name))
         return ResponseEntity.created(UriTemplate(GET_SINGLE_BUILDING_URI_TEMPLATE).expand(id).normalize()).build()
     }
 
@@ -54,7 +56,7 @@ class BuildingController(
 
     @PostMapping("{buildingId}/tenant")
     fun addTenant(@PathVariable("buildingId") buildingId: String, @RequestBody payload: AddTenantToBuildingJsonPayload): ResponseEntity<*> {
-        val id = addTenantToBuilding.execute(payload.toRequest(buildingId))
+        val id = addTenantToBuilding.execute(AddTenantToBuildingRequest(buildingId, payload.name))
         return ResponseEntity.created(UriTemplate(GET_BUILDING_TENANT_URI_TEMPLATE).expand(buildingId, id).normalize()).build()
     }
 

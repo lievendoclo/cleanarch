@@ -19,8 +19,8 @@ class EvictTenantFromBuildingImplTest extends Specification {
 
 	def "should evict tenant from building"() {
 		given:
-		def building = new Building(new BuildingId("buildingId"), "testBuilding", [new Tenant(new TenantId("tenantId"), "tenantName")])
-		buildingEntityGateway.findById(new BuildingId('buildingId')) >> building
+		def building = new Building("buildingId", "testBuilding", [new Tenant("tenantId", "tenantName")])
+		buildingEntityGateway.findById('buildingId') >> building
 
 		and:
 		def request = new EvictTenantFromBuildingRequest('buildingId','tenantId')
