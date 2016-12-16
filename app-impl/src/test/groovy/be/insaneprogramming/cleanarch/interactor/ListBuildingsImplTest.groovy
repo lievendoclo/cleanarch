@@ -3,14 +3,13 @@ package be.insaneprogramming.cleanarch.interactor
 import be.insaneprogramming.cleanarch.boundary.BuildingListPresenter
 import be.insaneprogramming.cleanarch.boundary.ListBuildings
 import be.insaneprogramming.cleanarch.entity.Building
-
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway
 import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest
 import spock.lang.Specification
 
 class ListBuildingsImplTest extends Specification {
-	ListBuildings listBuildings;
-	BuildingEntityGateway buildingEntityGateway;
+	ListBuildings listBuildings
+	BuildingEntityGateway buildingEntityGateway
 
 	def setup() {
 		buildingEntityGateway = Mock()
@@ -23,7 +22,7 @@ class ListBuildingsImplTest extends Specification {
 		buildingEntityGateway.findAll() >> buildings
 
 		when:
-		def response = listBuildings.execute(new ListBuildingsRequest(), {buildingResponses -> buildingResponses } as BuildingListPresenter).get()
+		def response = listBuildings.execute(new ListBuildingsRequest(), { buildingResponses -> buildingResponses } as BuildingListPresenter).get()
 
 		then:
 		response.size() == 2

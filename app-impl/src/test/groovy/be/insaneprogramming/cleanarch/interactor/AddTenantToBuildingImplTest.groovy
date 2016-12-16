@@ -1,15 +1,16 @@
 package be.insaneprogramming.cleanarch.interactor
 
 import be.insaneprogramming.cleanarch.boundary.AddTenantToBuilding
-import be.insaneprogramming.cleanarch.entity.*
+import be.insaneprogramming.cleanarch.entity.Building
+import be.insaneprogramming.cleanarch.entity.TenantFactory
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway
 import be.insaneprogramming.cleanarch.requestmodel.AddTenantToBuildingRequest
 import spock.lang.Specification
 
 class AddTenantToBuildingImplTest extends Specification {
-	AddTenantToBuilding addTenantToBuilding;
-	BuildingEntityGateway buildingEntityGateway;
-	TenantFactory tenantFactory;
+	AddTenantToBuilding addTenantToBuilding
+	BuildingEntityGateway buildingEntityGateway
+	TenantFactory tenantFactory
 
 	def setup() {
 		buildingEntityGateway = Mock()
