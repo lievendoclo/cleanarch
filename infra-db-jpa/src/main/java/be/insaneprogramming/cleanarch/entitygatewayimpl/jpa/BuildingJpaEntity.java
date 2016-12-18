@@ -1,29 +1,29 @@
 package be.insaneprogramming.cleanarch.entitygatewayimpl.jpa;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.EAGER;
+
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-
-import be.insaneprogramming.cleanarch.entity.BuildingId;
 
 @Entity
 public class BuildingJpaEntity {
 	@Id
 	private String id;
 	private String name;
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = { ALL }, fetch = EAGER)
 	@JoinColumn(name = "building_id")
 	private List<TenantJpaEntity> tenants;
 
-	BuildingJpaEntity() {
+	protected BuildingJpaEntity() {
 	}
 
-	public BuildingJpaEntity(BuildingId id, String name, List<TenantJpaEntity> tenants) {
-		this.id = id.getValue();
+	public BuildingJpaEntity(String id, String name, List<TenantJpaEntity> tenants) {
+		this.id = id;
 		this.name = name;
 		this.tenants = tenants;
 	}

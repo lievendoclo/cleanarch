@@ -1,6 +1,8 @@
 package be.insaneprogramming.cleanarch.requestmodel;
 
-public final class EvictTenantFromBuildingRequest {
+import java.util.Objects;
+
+public class EvictTenantFromBuildingRequest {
 	private final String buildingId;
 	private final String tenantId;
 
@@ -15,5 +17,19 @@ public final class EvictTenantFromBuildingRequest {
 
 	public String getTenantId() {
 		return tenantId;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		EvictTenantFromBuildingRequest that = (EvictTenantFromBuildingRequest) o;
+		return Objects.equals(buildingId, that.buildingId) &&
+				Objects.equals(tenantId, that.tenantId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(buildingId, tenantId);
 	}
 }

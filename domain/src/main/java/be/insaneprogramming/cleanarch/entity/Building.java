@@ -4,21 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Building {
-	private BuildingId id;
+	private String id;
 	private String name;
 	private List<Tenant> tenants;
 
-	public Building(BuildingId id, String name) {
+	public Building(String id, String name) {
 		this(id, name, new ArrayList<>());
 	}
 
-	public Building(BuildingId id, String name, List<Tenant> tenants) {
+	public Building(String id, String name, List<Tenant> tenants) {
 		this.id = id;
 		this.name = name;
 		this.tenants = tenants;
 	}
 
-	public BuildingId getId() {
+	public String getId() {
 		return id;
 	}
 
@@ -35,6 +35,6 @@ public class Building {
 	}
 
 	public void evictTenant(String tenantId) {
-		this.tenants.removeIf(it -> it.getId().equals(tenantId));
+		this.tenants.removeIf(it -> it.getId().equals(tenantId) );
 	}
 }

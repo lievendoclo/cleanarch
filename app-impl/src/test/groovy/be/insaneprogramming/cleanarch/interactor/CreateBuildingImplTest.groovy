@@ -8,30 +8,26 @@ import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest
 import spock.lang.Specification
 
 class CreateBuildingImplTest extends Specification {
-	CreateBuilding createBuilding;
-	BuildingEntityGateway buildingEntityGateway;
-	BuildingFactory buildingFactory;
+	CreateBuilding createBuilding
+	BuildingEntityGateway buildingEntityGateway
+	BuildingFactory buildingFactory
 
 	def setup() {
 		buildingEntityGateway = Mock()
-		buildingFactory = Mock()
-		createBuilding = new CreateBuildingImpl(buildingEntityGateway, buildingFactory)
+		buildingFactory = new BuildingFactory()
+		createBuilding = new CreateBuildingImpl(buildingFactory, buildingEntityGateway)
 	}
 
 	def "should create building"() {
 		given:
-		def createdBuilding = Mock(Building)
-		buildingFactory.createBuilding('testBuilding') >> createdBuilding
-		buildingEntityGateway.save(createdBuilding) >> 'testId'
-
-		and:
 		def request = new CreateBuildingRequest("testBuilding")
+		buildingEntityGateway.save(_ as Building) >> "testId"
 
 		when:
 		def response = createBuilding.execute(request)
 
 		then:
-		response == 'testId'
+		response != null
 	}
 
 	def "request should not be null"() {

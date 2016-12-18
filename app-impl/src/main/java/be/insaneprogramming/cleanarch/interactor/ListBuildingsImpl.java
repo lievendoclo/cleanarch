@@ -1,6 +1,5 @@
 package be.insaneprogramming.cleanarch.interactor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -13,7 +12,7 @@ import be.insaneprogramming.cleanarch.responsemodel.BuildingResponseModel;
 import be.insaneprogramming.cleanarch.responsemodel.TenantResponseModel;
 
 public class ListBuildingsImpl implements ListBuildings {
-	private BuildingEntityGateway buildingEntityGateway;
+	private final BuildingEntityGateway buildingEntityGateway;
 
 	public ListBuildingsImpl(BuildingEntityGateway buildingEntityGateway) {
 		this.buildingEntityGateway = buildingEntityGateway;
@@ -21,24 +20,18 @@ public class ListBuildingsImpl implements ListBuildings {
 
 	@Override
 	public <T> CompletableFuture<T> execute(ListBuildingsRequest request, BuildingListPresenter<T> buildingListPresenter) {
-		if (request == null) {
+		if(request == null) {
 			throw new IllegalArgumentException("request should not be null");
 		}
-		return CompletableFuture.supplyAsync(() -> {
-					List<BuildingResponseModel> response = new ArrayList<>();
-					buildingEntityGateway.findAll().forEach(b -> {
-							String id = b.getId().getValue();
-							String name = b.getName();
-							List<TenantResponseModel> tenantResponseModels = b.getTenants().stream().map(t ->
-									new TenantResponseModel(t.getId().getValue(), t.getName())
-							).collect(Collectors.toList());
-								BuildingResponseModel buildingResponseModel = new BuildingResponseModel(id, name, tenantResponseModels);
-								response.add(buildingResponseModel);
-							}
-					);
-					return buildingListPresenter.present(response);
-				}
+		if(buildingListPresenter == null) {
+			throw new IllegalArgumentException("buildingListPresenter should not be null");
+		}
+		return CompletableFuture.supplyAsync(() ->
+				buildingListPresenter.present(buildingEntityGateway.findAll().stream().map(b -> {
+							List<TenantResponseModel> tenantResponseModels = b.getTenants().stream().map(it -> new TenantResponseModel(it.getId(), it.getName())).collect(Collectors.toList());
+							return new BuildingResponseModel(b.getId(), b.getName(), tenantResponseModels);
+						}).collect(Collectors.toList())
+				)
 		);
-
 	}
 }

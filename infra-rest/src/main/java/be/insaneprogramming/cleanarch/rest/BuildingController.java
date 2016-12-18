@@ -5,7 +5,6 @@ import static be.insaneprogramming.cleanarch.rest.BuildingController.RESOURCE_UR
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +22,8 @@ import be.insaneprogramming.cleanarch.boundary.CreateBuilding;
 import be.insaneprogramming.cleanarch.boundary.EvictTenantFromBuilding;
 import be.insaneprogramming.cleanarch.boundary.ListBuildings;
 import be.insaneprogramming.cleanarch.presenter.JsonBuildingListPresenter;
+import be.insaneprogramming.cleanarch.requestmodel.AddTenantToBuildingRequest;
+import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest;
 import be.insaneprogramming.cleanarch.rest.payloadmodel.AddTenantToBuildingJsonPayload;
@@ -33,33 +34,34 @@ import be.insaneprogramming.cleanarch.rest.viewmodel.BuildingJson;
 @RequestMapping(RESOURCE_URI_TEMPLATE)
 public class BuildingController {
 	static final String RESOURCE_URI_TEMPLATE = "/building";
-	static final String GET_SINGLE_BUILDING_URI_TEMPLATE = RESOURCE_URI_TEMPLATE + "/{buildingId}";
-	static final String GET_BUILDING_TENANT_URI_TEMPLATE = GET_SINGLE_BUILDING_URI_TEMPLATE + "/tenant/{tenantId}";
+	private static final String GET_SINGLE_BUILDING_URI_TEMPLATE = RESOURCE_URI_TEMPLATE + "/{buildingId}";
+	private static final String GET_BUILDING_TENANT_URI_TEMPLATE = GET_SINGLE_BUILDING_URI_TEMPLATE + "/tenant/{tenantId}";
 
-	private final ListBuildings listBuildings;
-	private final CreateBuilding createBuilding;
-	private final AddTenantToBuilding addTenantToBuilding;
-	private final EvictTenantFromBuilding evictTenantFromBuilding;
-	@Autowired
-	public BuildingController(ListBuildings listBuildings, CreateBuilding createBuilding, AddTenantToBuilding addTenantToBuilding, EvictTenantFromBuilding evictTenantFromBuilding) {
-		this.listBuildings = listBuildings;
-		this.createBuilding = createBuilding;
+	private AddTenantToBuilding addTenantToBuilding;
+	private CreateBuilding createBuilding;
+	private EvictTenantFromBuilding evictTenantFromBuilding;
+	private ListBuildings listBuildings;
+
+	public BuildingController(AddTenantToBuilding addTenantToBuilding, CreateBuilding createBuilding, EvictTenantFromBuilding evictTenantFromBuilding,
+			ListBuildings listBuildings) {
 		this.addTenantToBuilding = addTenantToBuilding;
+		this.createBuilding = createBuilding;
 		this.evictTenantFromBuilding = evictTenantFromBuilding;
+		this.listBuildings = listBuildings;
 	}
 
 	@PostMapping
 	public ResponseEntity create(@RequestBody CreateBuildingJsonPayload payload) {
-		String id = createBuilding.execute(payload.toRequest());
+		String id = createBuilding.execute(new CreateBuildingRequest(payload.getName()));
 		return ResponseEntity.created(new UriTemplate(GET_SINGLE_BUILDING_URI_TEMPLATE).expand(id).normalize()).build();
 	}
 
 	@GetMapping
-	public DeferredResult<ResponseEntity> list() {
-		DeferredResult<ResponseEntity> deferred = new DeferredResult<>();
-		CompletableFuture<List<BuildingJson>> responseModels = listBuildings.execute(new ListBuildingsRequest(), new JsonBuildingListPresenter());
-		responseModels.whenComplete((buildingJsons, throwable) -> {
-			if(throwable != null) {
+	public DeferredResult<ResponseEntity<?>> list()  {
+		DeferredResult<ResponseEntity<?>> deferred = new DeferredResult<>();
+		CompletableFuture<List<BuildingJson>> buildingList = listBuildings.execute(new ListBuildingsRequest(), new JsonBuildingListPresenter());
+		buildingList.whenComplete( (buildingJsons, throwable) -> {
+			if (throwable != null) {
 				deferred.setResult(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(throwable.getMessage()));
 			} else {
 				deferred.setResult(ResponseEntity.ok(buildingJsons));
@@ -70,13 +72,12 @@ public class BuildingController {
 
 	@PostMapping("{buildingId}/tenant")
 	public ResponseEntity addTenant(@PathVariable("buildingId") String buildingId, @RequestBody AddTenantToBuildingJsonPayload payload) {
-		String id = addTenantToBuilding.execute(payload.toRequest(buildingId));
+		String id = addTenantToBuilding.execute(new AddTenantToBuildingRequest(buildingId, payload.getName()));
 		return ResponseEntity.created(new UriTemplate(GET_BUILDING_TENANT_URI_TEMPLATE).expand(buildingId, id).normalize()).build();
 	}
 
 	@DeleteMapping("{buildingId}/tenant/{tenantId}")
 	public void evictTenant(@PathVariable("buildingId") String buildingId, @PathVariable("tenantId") String tenantId) {
-		EvictTenantFromBuildingRequest request = new EvictTenantFromBuildingRequest(buildingId, tenantId);
-		evictTenantFromBuilding.execute(request);
+		evictTenantFromBuilding.execute(new EvictTenantFromBuildingRequest(buildingId, tenantId));
 	}
 }

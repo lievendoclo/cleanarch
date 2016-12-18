@@ -5,18 +5,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 
 import be.insaneprogramming.cleanarch.entity.Building;
-import be.insaneprogramming.cleanarch.entity.BuildingId;
 import be.insaneprogramming.cleanarch.entity.Tenant;
-import be.insaneprogramming.cleanarch.entity.TenantId;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 
 public class JdbcBuildingEntityGateway implements BuildingEntityGateway {
-	private NamedParameterJdbcTemplate jdbcTemplate;
+	private final NamedParameterJdbcOperations jdbcTemplate;
 
-	public JdbcBuildingEntityGateway(NamedParameterJdbcTemplate jdbcTemplate) {
+	public JdbcBuildingEntityGateway(NamedParameterJdbcOperations jdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
@@ -25,7 +24,7 @@ public class JdbcBuildingEntityGateway implements BuildingEntityGateway {
 		try {
 			findById(building.getId());
 			return update(building);
-		} catch(DataAccessException dae) {
+		} catch (DataAccessException dae) {
 			return insert(building);
 		}
 	}
@@ -33,21 +32,21 @@ public class JdbcBuildingEntityGateway implements BuildingEntityGateway {
 	private String insert(Building building) {
 		String query = "INSERT INTO building(id, name) VALUES (:id, :name)";
 		Map<String, String> params = new HashMap<>();
-		params.put("id", building.getId().getValue());
+		params.put("id", building.getId());
 		params.put("name", building.getName());
 		jdbcTemplate.update(query, params);
 		saveTenants(building);
-		return building.getId().getValue();
+		return building.getId();
 	}
 
 	private String update(Building building) {
 		String query = "UPDATE building SET name = :name WHERE id = :id";
 		Map<String, String> params = new HashMap<>();
-		params.put("id", building.getId().getValue());
+		params.put("id", building.getId());
 		params.put("name", building.getName());
 		jdbcTemplate.update(query, params);
 		saveTenants(building);
-		return building.getId().getValue();
+		return building.getId();
 	}
 
 	private void saveTenants(Building building) {
@@ -55,45 +54,43 @@ public class JdbcBuildingEntityGateway implements BuildingEntityGateway {
 		building.getTenants().forEach(it -> insert(building.getId(), it));
 	}
 
-	private void deleteAllTenants(BuildingId buildingId) {
+	private void deleteAllTenants(String buildingId) {
 		String query = "DELETE FROM tenant WHERE buildingId = :buildingId";
 		Map<String, String> params = new HashMap<>();
-		params.put("buildingId", buildingId.getValue());
+		params.put("buildingId", buildingId);
 		jdbcTemplate.update(query, params);
 	}
 
-	private String insert(BuildingId buildingId, Tenant tenant) {
+	private String insert(String buildingId, Tenant tenant) {
 		String query = "INSERT INTO tenant (id, name, buildingId) VALUES (:id, :name, :buildingId)";
 		Map<String, String> params = new HashMap<>();
-		params.put("id", tenant.getId().getValue());
+		params.put("id", tenant.getId());
 		params.put("name", tenant.getName());
-		params.put("buildingId", buildingId.getValue());
+		params.put("buildingId", buildingId);
 		jdbcTemplate.update(query, params);
-		return tenant.getId().getValue();
+		return tenant.getId();
 	}
 
-	@Override
 	public List<Building> findAll() {
 		String query = "SELECT * FROM building";
 		Map<String, String> params = new HashMap<>();
-		return jdbcTemplate.query(query, params, (rs, rowNum) -> {
-			BuildingId id = BuildingId.of(rs.getString("id"));
+		return jdbcTemplate.query(query, params, (RowMapper<Building>) (rs, rowNum) -> {
+			String id = rs.getString("id");
 			return new Building(id, rs.getString("name"), findByBuildingId(id));
 		});
 	}
 
-	@Override
-	public Building findById(BuildingId id) {
+	public Building findById(String buildingId) {
 		String query = "SELECT * FROM building WHERE id = :id";
 		Map<String, String> params = new HashMap<>();
-		params.put("id", id.getValue());
-		return jdbcTemplate.queryForObject(query, params, (rs, rowNum) -> new Building(BuildingId.of(rs.getString("id")), rs.getString("name")));
+		params.put("id", buildingId);
+		return jdbcTemplate.queryForObject(query, params, (rs, rowNum )-> new Building(rs.getString("id"), rs.getString("name")));
 	}
 
-	private List<Tenant> findByBuildingId(BuildingId buildingId) {
+	private List<Tenant> findByBuildingId(String buildingId) {
 		String query = "SELECT * FROM tenant WHERE buildingId = :buildingId";
 		Map<String, String> params = new HashMap<>();
-		params.put("buildingId", buildingId.getValue());
-		return jdbcTemplate.query(query, params, (rs, rowNum) -> new Tenant(TenantId.of(rs.getString("id")), rs.getString("name")));
+		params.put("buildingId", buildingId);
+		return jdbcTemplate.query(query, params, (rs, rowNum) -> new Tenant(rs.getString("id"), rs.getString("name")));
 	}
 }

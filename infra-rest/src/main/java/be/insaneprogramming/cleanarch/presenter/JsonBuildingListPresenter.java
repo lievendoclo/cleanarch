@@ -11,12 +11,10 @@ import be.insaneprogramming.cleanarch.rest.viewmodel.TenantJson;
 public class JsonBuildingListPresenter implements BuildingListPresenter<List<BuildingJson>> {
 	@Override
 	public List<BuildingJson> present(List<BuildingResponseModel> buildingResponses) {
-		return buildingResponses
-				.stream()
+		return buildingResponses.stream()
 				.map(it -> {
 					List<TenantJson> tenants = it.getTenants().stream().map(t -> new TenantJson(t.getId(), t.getName())).collect(Collectors.toList());
 					return new BuildingJson(it.getId(), it.getName(), tenants);
-				})
-				.collect(Collectors.toList());
+				}).collect(Collectors.toList());
 	}
 }

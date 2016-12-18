@@ -9,7 +9,7 @@ public class TenantDocument {
 	private String id;
 	private String name;
 
-	private TenantDocument() {}
+	protected TenantDocument() {}
 
 	public TenantDocument(String id, String name) {
 		this.id = id;

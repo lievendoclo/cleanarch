@@ -7,12 +7,13 @@ import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest;
 
 public class CreateBuildingImpl implements CreateBuilding {
-	private BuildingEntityGateway buildingEntityGateway;
-	private BuildingFactory buildingFactory;
 
-	public CreateBuildingImpl(BuildingEntityGateway buildingEntityGateway, BuildingFactory buildingFactory) {
-		this.buildingEntityGateway = buildingEntityGateway;
+	private final BuildingFactory buildingFactory;
+	private final BuildingEntityGateway buildingEntityGateway;
+
+	public CreateBuildingImpl(BuildingFactory buildingFactory, BuildingEntityGateway buildingEntityGateway) {
 		this.buildingFactory = buildingFactory;
+		this.buildingEntityGateway = buildingEntityGateway;
 	}
 
 	@Override

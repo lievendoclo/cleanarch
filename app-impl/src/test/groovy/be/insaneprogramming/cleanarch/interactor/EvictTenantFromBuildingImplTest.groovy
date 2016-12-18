@@ -3,26 +3,26 @@ package be.insaneprogramming.cleanarch.interactor
 import be.insaneprogramming.cleanarch.boundary.EvictTenantFromBuilding
 import be.insaneprogramming.cleanarch.entity.Building
 import be.insaneprogramming.cleanarch.entity.BuildingFactory
-import be.insaneprogramming.cleanarch.entity.BuildingId
+import be.insaneprogramming.cleanarch.entity.Tenant
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway
 import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequest
 import spock.lang.Specification
 
 class EvictTenantFromBuildingImplTest extends Specification {
-	EvictTenantFromBuilding evictTenantFromBuilding;
-	BuildingEntityGateway buildingEntityGateway;
-	BuildingFactory buildingFactory;
+	EvictTenantFromBuilding evictTenantFromBuilding
+	BuildingEntityGateway buildingEntityGateway
+	BuildingFactory buildingFactory
 
 	def setup() {
 		buildingEntityGateway = Mock()
-		buildingFactory = Mock()
+		buildingFactory = new BuildingFactory()
 		evictTenantFromBuilding = new EvictTenantFromBuildingImpl(buildingEntityGateway)
 	}
 
 	def "should evict tenant from building"() {
 		given:
-		def building = Mock(Building)
-		buildingEntityGateway.findById(BuildingId.of('buildingId')) >> building
+		def building = new Building("buildingId", "testBuilding", [new Tenant("tenantId", "tenantName")])
+		buildingEntityGateway.findById('buildingId') >> building
 
 		and:
 		def request = new EvictTenantFromBuildingRequest('buildingId','tenantId')
@@ -31,7 +31,7 @@ class EvictTenantFromBuildingImplTest extends Specification {
 		evictTenantFromBuilding.execute(request)
 
 		then:
-		1 * building.evictTenant('tenantId')
+		building.tenants.size() == 0
 	}
 
 	def "request should not be null"() {

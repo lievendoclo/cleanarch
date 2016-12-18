@@ -1,19 +1,35 @@
 package be.insaneprogramming.cleanarch.requestmodel;
 
-public final class AddTenantToBuildingRequest {
-	private final String buildingId;
-	private final String name;
+import java.util.Objects;
 
-	public AddTenantToBuildingRequest(String buildingId, String name) {
+public class AddTenantToBuildingRequest {
+	private final String buildingId;
+	private final String tenantName;
+
+	public AddTenantToBuildingRequest(String buildingId, String tenantName) {
 		this.buildingId = buildingId;
-		this.name = name;
+		this.tenantName = tenantName;
 	}
 
 	public String getBuildingId() {
 		return buildingId;
 	}
 
-	public String getName() {
-		return name;
+	public String getTenantName() {
+		return tenantName;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		AddTenantToBuildingRequest that = (AddTenantToBuildingRequest) o;
+		return Objects.equals(buildingId, that.buildingId) &&
+				Objects.equals(tenantName, that.tenantName);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(buildingId, tenantName);
 	}
 }

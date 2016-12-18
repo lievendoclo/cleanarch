@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
 import java.util.function.Supplier
 
 import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.given
-import static org.hamcrest.CoreMatchers.equalTo
+import static org.hamcrest.Matchers.equalTo
 
 class BuildingControllerTest extends Specification {
 	BuildingController buildingResource
@@ -33,9 +33,9 @@ class BuildingControllerTest extends Specification {
 		createBuilding = Mock()
 		addTenantToBuilding = Mock()
 		evictTenantFromBuilding = Mock()
-		buildingResource = new BuildingController(listBuildings, createBuilding, addTenantToBuilding, evictTenantFromBuilding)
-		RestAssuredMockMvc.standaloneSetup(buildingResource);
-		RestAssuredMockMvc.config().asyncConfig(AsyncConfig.withTimeout(1000, TimeUnit.MILLISECONDS));
+		buildingResource = new BuildingController(addTenantToBuilding, createBuilding, evictTenantFromBuilding, listBuildings)
+		RestAssuredMockMvc.standaloneSetup(buildingResource)
+		RestAssuredMockMvc.config().asyncConfig(AsyncConfig.withTimeout(1000, TimeUnit.MILLISECONDS))
 	}
 
 	def "returns a list of buildings"() {
@@ -97,4 +97,5 @@ class BuildingControllerTest extends Specification {
 		response.statusCode(201)
 		1 * addTenantToBuilding.execute(new AddTenantToBuildingRequest('testId', 'test'))
 	}
+
 }

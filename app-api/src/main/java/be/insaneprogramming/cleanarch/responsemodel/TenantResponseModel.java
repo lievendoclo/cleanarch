@@ -1,6 +1,8 @@
 package be.insaneprogramming.cleanarch.responsemodel;
 
-public final class TenantResponseModel {
+import java.util.Objects;
+
+public class TenantResponseModel {
 	private final String id;
 	private final String name;
 
@@ -15,5 +17,19 @@ public final class TenantResponseModel {
 
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		TenantResponseModel that = (TenantResponseModel) o;
+		return Objects.equals(id, that.id) &&
+				Objects.equals(name, that.name);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, name);
 	}
 }

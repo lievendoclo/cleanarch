@@ -1,15 +1,15 @@
 package be.insaneprogramming.cleanarch.entity;
 
 public class Tenant {
-	private TenantId id;
+	private String id;
 	private String name;
 
-	public Tenant(TenantId id, String name) {
+	public Tenant(String id, String name) {
 		this.id = id;
 		this.name = name;
 	}
 
-	public TenantId getId() {
+	public String getId() {
 		return id;
 	}
 

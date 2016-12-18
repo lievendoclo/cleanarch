@@ -14,8 +14,7 @@ public class BuildingDocument {
 	@Embedded
 	private List<TenantDocument> tenants;
 
-	private BuildingDocument() {
-	}
+	protected BuildingDocument() {}
 
 	public BuildingDocument(String id, String name, List<TenantDocument> tenants) {
 		this.id = id;

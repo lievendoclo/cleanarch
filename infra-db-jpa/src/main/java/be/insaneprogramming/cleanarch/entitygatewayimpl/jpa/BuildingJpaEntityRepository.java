@@ -5,4 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BuildingJpaEntityRepository extends CrudRepository<BuildingJpaEntity, String> {
+
 }

@@ -3,19 +3,17 @@ package be.insaneprogramming.cleanarch.entitygatewayimpl.jpa;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import be.insaneprogramming.cleanarch.entity.TenantId;
-
 @Entity
 public class TenantJpaEntity {
 	@Id
 	private String id;
 	private String name;
 
-	TenantJpaEntity() {
+	protected TenantJpaEntity() {
 	}
 
-	public TenantJpaEntity(TenantId id, String name) {
-		this.id = id.getValue();
+	public TenantJpaEntity(String id, String name) {
+		this.id = id;
 		this.name = name;
 	}
 
