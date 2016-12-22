@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
@@ -14,6 +13,7 @@ import com.mongodb.MongoClient;
 import be.insaneprogramming.cleanarch.boundary.AddTenantToBuilding;
 import be.insaneprogramming.cleanarch.boundary.CreateBuilding;
 import be.insaneprogramming.cleanarch.boundary.EvictTenantFromBuilding;
+import be.insaneprogramming.cleanarch.boundary.GetBuilding;
 import be.insaneprogramming.cleanarch.boundary.ListBuildings;
 import be.insaneprogramming.cleanarch.entity.BuildingFactory;
 import be.insaneprogramming.cleanarch.entity.TenantFactory;
@@ -25,6 +25,7 @@ import be.insaneprogramming.cleanarch.entitygatewayimpl.jpa.BuildingJpaEntityRep
 import be.insaneprogramming.cleanarch.interactor.AddTenantToBuildingImpl;
 import be.insaneprogramming.cleanarch.interactor.CreateBuildingImpl;
 import be.insaneprogramming.cleanarch.interactor.EvictTenantFromBuildingImpl;
+import be.insaneprogramming.cleanarch.interactor.GetBuildingImpl;
 import be.insaneprogramming.cleanarch.interactor.ListBuildingsImpl;
 
 @Configuration
@@ -50,6 +51,11 @@ public class Wiring {
 	}
 
 	@Bean
+	public GetBuilding getBuilding(BuildingEntityGateway buildingEntityGateway)  {
+		return new GetBuildingImpl(buildingEntityGateway);
+	}
+
+	@Bean
 	public BuildingFactory buildingFactory()  {
 		return new BuildingFactory();
 	}
@@ -61,7 +67,7 @@ public class Wiring {
 
 	@Configuration
 	@Profile("jpa")
-	public class JpaConfiguration {
+	public static class JpaConfiguration {
 		@Bean
 		public BuildingEntityGateway buildingEntityGateway( BuildingFactory buildingFactory, TenantFactory tenantFactory, BuildingJpaEntityRepository buildingJpaEntityRepository)  {
 			return new JpaBuildingEntityGateway(buildingJpaEntityRepository, buildingFactory, tenantFactory);
@@ -70,7 +76,7 @@ public class Wiring {
 
 	@Configuration
 	@Profile("jdbc")
-	public class JdbcConfiguration {
+	public static class JdbcConfiguration {
 		@Bean
 		public BuildingEntityGateway buildingEntityGateway(NamedParameterJdbcOperations jdbcTemplate) {
 			return new JdbcBuildingEntityGateway(jdbcTemplate);
@@ -79,7 +85,7 @@ public class Wiring {
 
 	@Configuration
 	@Profile("mongodb")
-	public class MongoConfiguration {
+	public static class MongoConfiguration {
 		@Bean
 		public BuildingEntityGateway buildingEntityGateway(Datastore datastore)  {
 			return new MongoDbBuildingEntityGateway(datastore);

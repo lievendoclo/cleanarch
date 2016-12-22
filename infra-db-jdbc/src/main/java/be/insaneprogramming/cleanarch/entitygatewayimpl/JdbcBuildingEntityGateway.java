@@ -5,13 +5,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.transaction.annotation.Transactional;
 
 import be.insaneprogramming.cleanarch.entity.Building;
 import be.insaneprogramming.cleanarch.entity.Tenant;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 
+@Transactional
 public class JdbcBuildingEntityGateway implements BuildingEntityGateway {
 	private final NamedParameterJdbcOperations jdbcTemplate;
 
@@ -74,9 +75,9 @@ public class JdbcBuildingEntityGateway implements BuildingEntityGateway {
 	public List<Building> findAll() {
 		String query = "SELECT * FROM building";
 		Map<String, String> params = new HashMap<>();
-		return jdbcTemplate.query(query, params, (RowMapper<Building>) (rs, rowNum) -> {
+		return jdbcTemplate.query(query, params, (rs, rowNum) -> {
 			String id = rs.getString("id");
-			return new Building(id, rs.getString("name"), findByBuildingId(id));
+			return new Building(id, rs.getString("name"), findTenantsByBuildingId(id));
 		});
 	}
 
@@ -84,10 +85,13 @@ public class JdbcBuildingEntityGateway implements BuildingEntityGateway {
 		String query = "SELECT * FROM building WHERE id = :id";
 		Map<String, String> params = new HashMap<>();
 		params.put("id", buildingId);
-		return jdbcTemplate.queryForObject(query, params, (rs, rowNum )-> new Building(rs.getString("id"), rs.getString("name")));
+		return jdbcTemplate.queryForObject(query, params, (rs, rowNum) -> {
+			String buildingName = rs.getString("name");
+			return new Building(buildingId, buildingName, findTenantsByBuildingId(buildingId));
+		});
 	}
 
-	private List<Tenant> findByBuildingId(String buildingId) {
+	private List<Tenant> findTenantsByBuildingId(String buildingId) {
 		String query = "SELECT * FROM tenant WHERE buildingId = :buildingId";
 		Map<String, String> params = new HashMap<>();
 		params.put("buildingId", buildingId);

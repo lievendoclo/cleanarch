@@ -18,9 +18,6 @@ public class CreateBuildingImpl implements CreateBuilding {
 
 	@Override
 	public String execute(CreateBuildingRequest request) {
-		if(request == null) {
-			throw new IllegalArgumentException("request should not be null");
-		}
 		Building building = buildingFactory.createBuilding(request.getName());
 		return buildingEntityGateway.save(building);
 	}

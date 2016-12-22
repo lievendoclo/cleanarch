@@ -1,0 +1,4 @@
+@ParametersAreNonnullByDefault
+package be.insaneprogramming.cleanarch.requestmodel;
+
+import javax.annotation.ParametersAreNonnullByDefault;

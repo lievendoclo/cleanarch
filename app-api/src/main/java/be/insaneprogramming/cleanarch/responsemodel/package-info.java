@@ -1,0 +1,4 @@
+@ParametersAreNonnullByDefault
+package be.insaneprogramming.cleanarch.responsemodel;
+
+import javax.annotation.ParametersAreNonnullByDefault;

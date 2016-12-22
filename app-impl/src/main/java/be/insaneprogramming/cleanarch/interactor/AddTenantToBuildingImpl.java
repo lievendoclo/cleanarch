@@ -19,9 +19,6 @@ public class AddTenantToBuildingImpl implements AddTenantToBuilding {
 
 	@Override
 	public String execute(AddTenantToBuildingRequest request) {
-		if(request == null) {
-			throw new IllegalArgumentException("request should not be null");
-		}
 		Building building = buildingEntityGateway.findById(request.getBuildingId());
 		Tenant tenant = tenantFactory.createTenant(request.getTenantName());
 		building.addTenant(tenant);

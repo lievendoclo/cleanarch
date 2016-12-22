@@ -3,9 +3,7 @@ package be.insaneprogramming.cleanarch.rest;
 import static be.insaneprogramming.cleanarch.rest.BuildingController.RESOURCE_URI_TEMPLATE;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,17 +12,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.util.UriTemplate;
 
 import be.insaneprogramming.cleanarch.boundary.AddTenantToBuilding;
 import be.insaneprogramming.cleanarch.boundary.CreateBuilding;
 import be.insaneprogramming.cleanarch.boundary.EvictTenantFromBuilding;
+import be.insaneprogramming.cleanarch.boundary.GetBuilding;
 import be.insaneprogramming.cleanarch.boundary.ListBuildings;
-import be.insaneprogramming.cleanarch.presenter.JsonBuildingListPresenter;
+import be.insaneprogramming.cleanarch.presenter.JsonBuildingResponseModelPresenter;
 import be.insaneprogramming.cleanarch.requestmodel.AddTenantToBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequest;
+import be.insaneprogramming.cleanarch.requestmodel.GetBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest;
 import be.insaneprogramming.cleanarch.rest.payloadmodel.AddTenantToBuildingJsonPayload;
 import be.insaneprogramming.cleanarch.rest.payloadmodel.CreateBuildingJsonPayload;
@@ -41,33 +40,35 @@ public class BuildingController {
 	private CreateBuilding createBuilding;
 	private EvictTenantFromBuilding evictTenantFromBuilding;
 	private ListBuildings listBuildings;
+	private GetBuilding getBuilding;
 
 	public BuildingController(AddTenantToBuilding addTenantToBuilding, CreateBuilding createBuilding, EvictTenantFromBuilding evictTenantFromBuilding,
-			ListBuildings listBuildings) {
+			ListBuildings listBuildings, GetBuilding getBuilding) {
 		this.addTenantToBuilding = addTenantToBuilding;
 		this.createBuilding = createBuilding;
 		this.evictTenantFromBuilding = evictTenantFromBuilding;
 		this.listBuildings = listBuildings;
+		this.getBuilding = getBuilding;
 	}
 
 	@PostMapping
 	public ResponseEntity create(@RequestBody CreateBuildingJsonPayload payload) {
 		String id = createBuilding.execute(new CreateBuildingRequest(payload.getName()));
-		return ResponseEntity.created(new UriTemplate(GET_SINGLE_BUILDING_URI_TEMPLATE).expand(id).normalize()).build();
+		return ResponseEntity.created(new UriTemplate(GET_SINGLE_BUILDING_URI_TEMPLATE).expand(id).normalize())
+				.header("X-Created-Id", id)
+				.build();
 	}
 
 	@GetMapping
-	public DeferredResult<ResponseEntity<?>> list()  {
-		DeferredResult<ResponseEntity<?>> deferred = new DeferredResult<>();
-		CompletableFuture<List<BuildingJson>> buildingList = listBuildings.execute(new ListBuildingsRequest(), new JsonBuildingListPresenter());
-		buildingList.whenComplete( (buildingJsons, throwable) -> {
-			if (throwable != null) {
-				deferred.setResult(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(throwable.getMessage()));
-			} else {
-				deferred.setResult(ResponseEntity.ok(buildingJsons));
-			}
-		});
-		return deferred;
+	public List<BuildingJson> list()  {
+		List<BuildingJson> buildingList = listBuildings.execute(new ListBuildingsRequest(), new JsonBuildingResponseModelPresenter());
+		return buildingList;
+	}
+
+	@GetMapping("/{buildingId}")
+	public BuildingJson get(@PathVariable String buildingId)  {
+		BuildingJson building = getBuilding.execute(new GetBuildingRequest(buildingId), new JsonBuildingResponseModelPresenter());
+		return building;
 	}
 
 	@PostMapping("{buildingId}/tenant")

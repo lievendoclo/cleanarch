@@ -1,0 +1,4 @@
+@ParametersAreNonnullByDefault
+package be.insaneprogramming.cleanarch.boundary;
+
+import javax.annotation.ParametersAreNonnullByDefault;

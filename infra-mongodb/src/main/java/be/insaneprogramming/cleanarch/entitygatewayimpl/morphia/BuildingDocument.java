@@ -1,5 +1,6 @@
 package be.insaneprogramming.cleanarch.entitygatewayimpl.morphia;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.mongodb.morphia.annotations.Embedded;
@@ -12,7 +13,7 @@ public class BuildingDocument {
 	private String id;
 	private String name;
 	@Embedded
-	private List<TenantDocument> tenants;
+	private List<TenantDocument> tenants = new ArrayList<>();
 
 	protected BuildingDocument() {}
 

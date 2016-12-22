@@ -2,6 +2,9 @@ package be.insaneprogramming.cleanarch.requestmodel;
 
 import java.util.Objects;
 
+import javax.annotation.concurrent.Immutable;
+
+@Immutable
 public class AddTenantToBuildingRequest {
 	private final String buildingId;
 	private final String tenantName;

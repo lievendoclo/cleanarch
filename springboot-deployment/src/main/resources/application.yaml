@@ -8,6 +8,8 @@ spring:
   profiles: jpa
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+  datasource:
+    initialize: false
 
 ---
 
@@ -17,6 +19,8 @@ spring:
     exclude:
     - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
     - org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration
+  datasource:
+    initialize: false
 
 ---
 

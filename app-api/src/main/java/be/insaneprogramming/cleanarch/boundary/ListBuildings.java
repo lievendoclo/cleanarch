@@ -1,10 +1,11 @@
 package be.insaneprogramming.cleanarch.boundary;
 
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
 
 import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest;
 
 @FunctionalInterface
+@Boundary
 public interface ListBuildings {
-	<T> CompletableFuture<T> execute(ListBuildingsRequest request, BuildingListPresenter<T> buildingListPresenter);
+	<T> List<T> execute(ListBuildingsRequest request, BuildingResponseModelPresenter<T> buildingResponseModelPresenter);
 }

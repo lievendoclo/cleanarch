@@ -14,9 +14,6 @@ public class EvictTenantFromBuildingImpl implements EvictTenantFromBuilding {
 
 	@Override
 	public void execute(EvictTenantFromBuildingRequest request) {
-		if(request == null) {
-			throw new IllegalArgumentException("request should not be null");
-		}
 		Building building = buildingEntityGateway.findById(request.getBuildingId());
 		building.evictTenant(request.getTenantId());
 		buildingEntityGateway.save(building);

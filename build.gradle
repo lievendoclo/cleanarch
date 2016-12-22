@@ -7,36 +7,32 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.1.RELEASE")
-		classpath 'io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE'
-		classpath "net.ltgt.gradle:gradle-apt-plugin:0.7"
+		classpath "io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE"
 	}
 }
 
 subprojects {
-	apply plugin: "groovy"
-	apply plugin: 'io.spring.dependency-management'
+	apply plugin: "java"
+	apply plugin: "io.spring.dependency-management"
 	apply plugin: "idea"
-	apply plugin: "osgi"
 
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
 
 	repositories {
 		jcenter()
-		maven { url ='https://dl.bintray.com/kotlin/kotlin-eap-1.1' }
 	}
 
 	dependencyManagement {
 		imports {
-			mavenBom 'io.spring.platform:platform-bom:Athens-RELEASE'
+			mavenBom "io.spring.platform:platform-bom:Athens-RELEASE"
 		}
 	}
 
 	dependencies {
-		testCompile "org.spockframework:spock-core:1.1-groovy-2.4-rc-2"
-		testCompile "org.codehaus.groovy:groovy-all:2.4.7"
-		testCompile 'cglib:cglib-nodep:3.2.4'
-		testCompile 'org.objenesis:objenesis:2.4'
+		compile "com.google.code.findbugs:jsr305:3.0.1"
+		testCompile 'junit:junit:4.12'
+		testCompile 'org.assertj:assertj-core:3.6.1'
 	}
 }
 
@@ -47,6 +43,8 @@ project(":app-impl") {
 	dependencies {
 		compile project(":app-api")
 		compile project(":domain")
+
+		testCompile "org.mockito:mockito-core"
 	}
 }
 
@@ -59,11 +57,9 @@ project(":infra-rest") {
 
 		compile "org.springframework:spring-webmvc"
 		compile "com.fasterxml.jackson.core:jackson-databind"
-//		compile "com.fasterxml.jackson.module:jackson-module-kotlin"
 
-		testCompile 'com.jayway.restassured:spring-mock-mvc:2.9.0'
-		testCompile 'javax.servlet:javax.servlet-api:3.1.0'
-		testCompile 'commons-logging:commons-logging:1.2'
+		testCompile "javax.servlet:javax.servlet-api:3.1.0"
+		testCompile "commons-logging:commons-logging:1.2"
 	}
 }
 
@@ -78,14 +74,14 @@ project(":infra-db-jpa") {
 project(":infra-mongodb") {
 	dependencies {
 		compile project(":domain")
-		compile 'org.mongodb.morphia:morphia:1.2.1'
+		compile "org.mongodb.morphia:morphia:1.2.1"
 	}
 }
 
 project(":infra-db-jdbc") {
 	dependencies {
 		compile project(":domain")
-		compile 'org.springframework:spring-jdbc'
+		compile "org.springframework:spring-jdbc"
 	}
 }
 
@@ -106,9 +102,10 @@ project(":springboot-deployment") {
 		compile "org.springframework.boot:spring-boot-actuator"
 
 		compile "com.h2database:h2"
-		compile 'com.github.fakemongo:fongo:2.0.9'
+		compile "com.github.fakemongo:fongo:2.0.9"
 
 		testCompile "org.spockframework:spock-spring:1.1-groovy-2.4-rc-2"
 		testCompile "org.springframework.boot:spring-boot-starter-test"
+		testCompile "com.jayway.restassured:spring-mock-mvc:2.9.0"
 	}
 }

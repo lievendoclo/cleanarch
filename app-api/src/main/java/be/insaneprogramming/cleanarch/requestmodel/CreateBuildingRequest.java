@@ -2,6 +2,9 @@ package be.insaneprogramming.cleanarch.requestmodel;
 
 import java.util.Objects;
 
+import jdk.nashorn.internal.ir.annotations.Immutable;
+
+@Immutable
 public class CreateBuildingRequest {
 	private final String name;
 

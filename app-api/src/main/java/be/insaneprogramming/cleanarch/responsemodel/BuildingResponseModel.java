@@ -1,14 +1,17 @@
 package be.insaneprogramming.cleanarch.responsemodel;
 
-import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Nonnull;
+import javax.annotation.concurrent.Immutable;
+
+@Immutable
 public class BuildingResponseModel {
 	private final String id;
 	private final String name;
-	private final List<TenantResponseModel> tenants;
+	private final Iterable<TenantResponseModel> tenants;
 
-	public BuildingResponseModel(String id, String name, List<TenantResponseModel> tenants) {
+	public BuildingResponseModel(String id, String name, Iterable<TenantResponseModel> tenants) {
 		this.id = id;
 		this.name = name;
 		this.tenants = tenants;
@@ -22,7 +25,8 @@ public class BuildingResponseModel {
 		return name;
 	}
 
-	public List<TenantResponseModel> getTenants() {
+	@Nonnull
+	public Iterable<TenantResponseModel> getTenants() {
 		return tenants;
 	}
 

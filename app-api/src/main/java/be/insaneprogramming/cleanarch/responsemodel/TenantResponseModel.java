@@ -2,6 +2,9 @@ package be.insaneprogramming.cleanarch.responsemodel;
 
 import java.util.Objects;
 
+import javax.annotation.concurrent.Immutable;
+
+@Immutable
 public class TenantResponseModel {
 	private final String id;
 	private final String name;

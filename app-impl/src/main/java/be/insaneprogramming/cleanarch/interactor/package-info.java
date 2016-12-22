@@ -1,0 +1,4 @@
+@ParametersAreNonnullByDefault
+package be.insaneprogramming.cleanarch.interactor;
+
+import javax.annotation.ParametersAreNonnullByDefault;
