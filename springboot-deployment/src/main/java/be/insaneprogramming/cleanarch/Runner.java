@@ -7,7 +7,7 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement
 public class Runner extends SpringBootServletInitializer {
 
 	@Override
