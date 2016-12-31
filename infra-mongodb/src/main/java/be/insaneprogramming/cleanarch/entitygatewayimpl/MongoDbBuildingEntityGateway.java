@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toList;
 import java.util.List;
 
 import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.query.Query;
 
 import be.insaneprogramming.cleanarch.entity.Building;
 import be.insaneprogramming.cleanarch.entity.Tenant;
@@ -26,6 +27,13 @@ public class MongoDbBuildingEntityGateway implements BuildingEntityGateway {
 
 	public List<Building> findAll() {
 		return datastore.find(BuildingDocument.class).asList().stream().map(this::toDomain).collect(toList());
+	}
+
+	@Override
+	public List<Building> findByNameStartingWith(String name) {
+		final Query<BuildingDocument> query = datastore.createQuery(BuildingDocument.class);
+		query.criteria("name").startsWith("name");
+		return query.asList().stream().map(this::toDomain).collect(toList());
 	}
 
 	public Building findById(String id)  {

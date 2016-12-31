@@ -27,12 +27,28 @@ public class ListBuildingsImplTest {
 	}
 
 	@Test
-	public void shouldAddCreateBuilding() {
+	public void shouldFindBuildingsWithoutFilter() {
 		//given
 		List<Building> buildingList = new ArrayList<>();
 		buildingList.add(new Building("buildingId", "buildingName"));
 		doReturn(buildingList).when(buildingEntityGateway).findAll();
-		ListBuildingsRequest request = new ListBuildingsRequest();
+		ListBuildingsRequest request = new ListBuildingsRequest(null);
+
+		//when
+		List<String> buildings = listBuildings.execute(request, BuildingResponseModel::getId);
+
+		//then
+		assertThat(buildings).hasSize(1);
+	}
+
+	@Test
+	public void shouldFindBuildingsWithFilter() {
+		//given
+		String filter = "name";
+		List<Building> buildingList = new ArrayList<>();
+		buildingList.add(new Building("buildingId", "buildingName"));
+		doReturn(buildingList).when(buildingEntityGateway).findByNameStartingWith(filter);
+		ListBuildingsRequest request = new ListBuildingsRequest(filter);
 
 		//when
 		List<String> buildings = listBuildings.execute(request, BuildingResponseModel::getId);

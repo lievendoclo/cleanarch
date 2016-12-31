@@ -1,18 +1,17 @@
 package be.insaneprogramming.cleanarch.rest;
 
-import static be.insaneprogramming.cleanarch.rest.BuildingController.RESOURCE_URI_TEMPLATE;
-
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriTemplate;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 import be.insaneprogramming.cleanarch.boundary.AddTenantToBuilding;
 import be.insaneprogramming.cleanarch.boundary.CreateBuilding;
@@ -29,9 +28,8 @@ import be.insaneprogramming.cleanarch.rest.payloadmodel.AddTenantToBuildingJsonP
 import be.insaneprogramming.cleanarch.rest.payloadmodel.CreateBuildingJsonPayload;
 import be.insaneprogramming.cleanarch.rest.viewmodel.BuildingJson;
 
-@RestController
-@RequestMapping(RESOURCE_URI_TEMPLATE)
-public class BuildingController {
+@Path(BuildingResource.RESOURCE_URI_TEMPLATE)
+public class BuildingResource {
 	static final String RESOURCE_URI_TEMPLATE = "/building";
 	private static final String GET_SINGLE_BUILDING_URI_TEMPLATE = RESOURCE_URI_TEMPLATE + "/{buildingId}";
 	private static final String GET_BUILDING_TENANT_URI_TEMPLATE = GET_SINGLE_BUILDING_URI_TEMPLATE + "/tenant/{tenantId}";
@@ -42,7 +40,7 @@ public class BuildingController {
 	private ListBuildings listBuildings;
 	private GetBuilding getBuilding;
 
-	public BuildingController(AddTenantToBuilding addTenantToBuilding, CreateBuilding createBuilding, EvictTenantFromBuilding evictTenantFromBuilding,
+	public BuildingResource(AddTenantToBuilding addTenantToBuilding, CreateBuilding createBuilding, EvictTenantFromBuilding evictTenantFromBuilding,
 			ListBuildings listBuildings, GetBuilding getBuilding) {
 		this.addTenantToBuilding = addTenantToBuilding;
 		this.createBuilding = createBuilding;
@@ -51,34 +49,40 @@ public class BuildingController {
 		this.getBuilding = getBuilding;
 	}
 
-	@PostMapping
-	public ResponseEntity create(@RequestBody CreateBuildingJsonPayload payload) {
+	@POST
+	@Consumes("application/json")
+	public Response create(CreateBuildingJsonPayload payload) {
 		String id = createBuilding.execute(new CreateBuildingRequest(payload.getName()));
-		return ResponseEntity.created(new UriTemplate(GET_SINGLE_BUILDING_URI_TEMPLATE).expand(id).normalize())
+		return Response.created(UriBuilder.fromPath(GET_SINGLE_BUILDING_URI_TEMPLATE).resolveTemplate("buildingId", id).build())
 				.header("X-Created-Id", id)
 				.build();
 	}
 
-	@GetMapping
-	public List<BuildingJson> list()  {
-		List<BuildingJson> buildingList = listBuildings.execute(new ListBuildingsRequest(), new JsonBuildingResponseModelPresenter());
-		return buildingList;
+	@GET
+	@Produces("application/json")
+	public List<BuildingJson> list(@QueryParam("nameStartsWith") String nameStartsWith)  {
+		return listBuildings.execute(new ListBuildingsRequest(nameStartsWith), new JsonBuildingResponseModelPresenter());
 	}
 
-	@GetMapping("/{buildingId}")
-	public BuildingJson get(@PathVariable String buildingId)  {
-		BuildingJson building = getBuilding.execute(new GetBuildingRequest(buildingId), new JsonBuildingResponseModelPresenter());
-		return building;
+	@GET
+	@Produces("application/json")
+	@Path("/{buildingId}")
+	public BuildingJson get(@PathParam(("buildingId")) String buildingId)  {
+		return getBuilding.execute(new GetBuildingRequest(buildingId), new JsonBuildingResponseModelPresenter());
 	}
 
-	@PostMapping("{buildingId}/tenant")
-	public ResponseEntity addTenant(@PathVariable("buildingId") String buildingId, @RequestBody AddTenantToBuildingJsonPayload payload) {
+	@POST
+	@Consumes("application/json")
+	@Path("{buildingId}/tenant")
+	public Response addTenant(@PathParam("buildingId") String buildingId, AddTenantToBuildingJsonPayload payload) {
 		String id = addTenantToBuilding.execute(new AddTenantToBuildingRequest(buildingId, payload.getName()));
-		return ResponseEntity.created(new UriTemplate(GET_BUILDING_TENANT_URI_TEMPLATE).expand(buildingId, id).normalize()).build();
+		return Response.created(UriBuilder.fromPath(GET_BUILDING_TENANT_URI_TEMPLATE).resolveTemplate("buildingId", buildingId).resolveTemplate("tenantId", id).build()).build();
 	}
 
-	@DeleteMapping("{buildingId}/tenant/{tenantId}")
-	public void evictTenant(@PathVariable("buildingId") String buildingId, @PathVariable("tenantId") String tenantId) {
+	@DELETE
+	@Path("{buildingId}/tenant/{tenantId}")
+	public Response evictTenant(@PathParam("buildingId") String buildingId, @PathParam("tenantId") String tenantId) {
 		evictTenantFromBuilding.execute(new EvictTenantFromBuildingRequest(buildingId, tenantId));
+		return Response.ok().build();
 	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -75,20 +76,29 @@ public class JdbcBuildingEntityGateway implements BuildingEntityGateway {
 	public List<Building> findAll() {
 		String query = "SELECT * FROM building";
 		Map<String, String> params = new HashMap<>();
-		return jdbcTemplate.query(query, params, (rs, rowNum) -> {
-			String id = rs.getString("id");
-			return new Building(id, rs.getString("name"), findTenantsByBuildingId(id));
-		});
+		return jdbcTemplate.query(query, params, getBuildingRowMapper());
+	}
+
+	private RowMapper<Building> getBuildingRowMapper() {
+		return (rs, rowNum) -> {
+				String id = rs.getString("id");
+				return new Building(id, rs.getString("name"), findTenantsByBuildingId(id));
+			};
+	}
+
+	@Override
+	public List<Building> findByNameStartingWith(String name) {
+		String query = "SELECT * FROM building WHERE name LIKE :name";
+		Map<String, String> params = new HashMap<>();
+		params.put("name", name + "%");
+		return jdbcTemplate.query(query, params, getBuildingRowMapper());
 	}
 
 	public Building findById(String buildingId) {
 		String query = "SELECT * FROM building WHERE id = :id";
 		Map<String, String> params = new HashMap<>();
 		params.put("id", buildingId);
-		return jdbcTemplate.queryForObject(query, params, (rs, rowNum) -> {
-			String buildingName = rs.getString("name");
-			return new Building(buildingId, buildingName, findTenantsByBuildingId(buildingId));
-		});
+		return jdbcTemplate.queryForObject(query, params, getBuildingRowMapper());
 	}
 
 	private List<Tenant> findTenantsByBuildingId(String buildingId) {

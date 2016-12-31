@@ -34,6 +34,11 @@ public class JpaBuildingEntityGateway implements BuildingEntityGateway {
 		return buildings;
 	}
 
+	@Override
+	public List<Building> findByNameStartingWith(String name) {
+		return buildingJpaEntityRepository.findByNameStartsWith(name).stream().map(this::toDomain).collect(Collectors.toList());
+	}
+
 	public Building findById(String buildingId) {
 		return toDomain(buildingJpaEntityRepository.findOne(buildingId));
 	}
