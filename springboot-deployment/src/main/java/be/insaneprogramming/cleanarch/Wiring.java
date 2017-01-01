@@ -1,5 +1,8 @@
 package be.insaneprogramming.cleanarch;
 
+import javax.sql.DataSource;
+
+import org.skife.jdbi.v2.DBI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -11,13 +14,13 @@ import be.insaneprogramming.cleanarch.boundary.ListBuildings;
 import be.insaneprogramming.cleanarch.entity.BuildingFactory;
 import be.insaneprogramming.cleanarch.entity.TenantFactory;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
-import be.insaneprogramming.cleanarch.entitygatewayimpl.JpaBuildingEntityGateway;
-import be.insaneprogramming.cleanarch.entitygatewayimpl.jpa.BuildingJpaEntityRepository;
+import be.insaneprogramming.cleanarch.entitygatewayimpl.JdbcBuildingEntityGateway;
 import be.insaneprogramming.cleanarch.interactor.AddTenantToBuildingImpl;
 import be.insaneprogramming.cleanarch.interactor.CreateBuildingImpl;
 import be.insaneprogramming.cleanarch.interactor.EvictTenantFromBuildingImpl;
 import be.insaneprogramming.cleanarch.interactor.GetBuildingImpl;
 import be.insaneprogramming.cleanarch.interactor.ListBuildingsImpl;
+import be.insaneprogramming.cleanarch.rest.BuildingResource;
 
 @Configuration
 public class Wiring {
@@ -57,7 +60,22 @@ public class Wiring {
 	}
 
 	@Bean
-	public BuildingEntityGateway buildingEntityGateway( BuildingFactory buildingFactory, TenantFactory tenantFactory, BuildingJpaEntityRepository buildingJpaEntityRepository)  {
-		return new JpaBuildingEntityGateway(buildingJpaEntityRepository, buildingFactory, tenantFactory);
+	public DBI dbi(DataSource dataSource) {
+		return new DBI(dataSource);
+	}
+
+	@Bean
+	public BuildingEntityGateway buildingEntityGateway(DBI dbi)  {
+		return new JdbcBuildingEntityGateway(dbi);
+	}
+
+	@Bean
+	public BuildingResource buildingResource(AddTenantToBuilding addTenantToBuilding, EvictTenantFromBuilding evictTenantFromBuilding, CreateBuilding createBuilding, ListBuildings listBuildings, GetBuilding getBuilding) {
+		return new BuildingResource(addTenantToBuilding, createBuilding, evictTenantFromBuilding, listBuildings, getBuilding);
+	}
+
+	@Bean
+	public RestApplication restApplication(BuildingResource buildingResource) {
+		return new RestApplication(buildingResource);
 	}
 }
