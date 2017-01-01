@@ -66,7 +66,7 @@ public class BuildingIntegrationTest {
 		String nameBuilding1 = UUID.randomUUID().toString();
 		String nameBuilding2 = UUID.randomUUID().toString();
 		buildingEntityGateway.save(new Building("id1", nameBuilding1));
-		buildingEntityGateway.save(new Building("id2", nameBuilding1));
+		buildingEntityGateway.save(new Building("id2", nameBuilding2));
 
 		// expect
 		when()
