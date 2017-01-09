@@ -3,6 +3,7 @@ package be.insaneprogramming.cleanarch.entitygatewayimpl.jpa;
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -26,6 +27,12 @@ public class BuildingJpaEntity {
 		this.id = id;
 		this.name = name;
 		this.tenants = tenants;
+	}
+
+	public BuildingJpaEntity(String id, String name) {
+		this.id = id;
+		this.name = name;
+		tenants = new ArrayList<>();
 	}
 
 	public String getId() {

@@ -1,22 +1,24 @@
 package be.insaneprogramming.cleanarch.interactor;
 
+import java.util.UUID;
+
 import be.insaneprogramming.cleanarch.boundary.CreateBuilding;
-import be.insaneprogramming.cleanarch.entity.Building;
-import be.insaneprogramming.cleanarch.entity.BuildingFactory;
-import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
+import be.insaneprogramming.cleanarch.event.BuildingCreated;
+import be.insaneprogramming.cleanarch.event.EventPublisher;
 import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest;
 
 public class CreateBuildingImpl implements CreateBuilding {
 
-	private final BuildingEntityGateway buildingEntityGateway;
+	private final EventPublisher eventPublisher;
 
-	public CreateBuildingImpl(BuildingEntityGateway buildingEntityGateway) {
-		this.buildingEntityGateway = buildingEntityGateway;
+	public CreateBuildingImpl(EventPublisher eventPublisher) {
+		this.eventPublisher = eventPublisher;
 	}
 
 	@Override
 	public String execute(CreateBuildingRequest request) {
-		Building building = BuildingFactory.create().createBuilding(request.getName());
-		return buildingEntityGateway.save(building);
+		String id = UUID.randomUUID().toString();
+		eventPublisher.publish(new BuildingCreated(id, request.getName()));
+		return id;
 	}
 }

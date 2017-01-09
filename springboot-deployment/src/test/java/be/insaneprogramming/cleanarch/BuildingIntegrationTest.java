@@ -7,7 +7,6 @@ import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 import org.junit.Before;
@@ -20,15 +19,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.jayway.restassured.RestAssured;
 
-import be.insaneprogramming.cleanarch.entity.BuildingFactory;
-import be.insaneprogramming.cleanarch.entity.TenantFactory;
-import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
+import be.insaneprogramming.cleanarch.event.BuildingCreated;
+import be.insaneprogramming.cleanarch.event.EventPublisher;
+import be.insaneprogramming.cleanarch.event.TenantAddedToBuilding;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 public class BuildingIntegrationTest {
+//	@Autowired
+//	private BuildingEntityGateway buildingEntityGateway;
 	@Autowired
-	private BuildingEntityGateway buildingEntityGateway;
+	private EventPublisher eventPublisher;
 	@Value("${local.server.port}")
 	private int serverPort;
 
@@ -50,8 +51,8 @@ public class BuildingIntegrationTest {
 	@Test
 	public void testGetAllBuildings() throws InterruptedException {
 		// given
-		buildingEntityGateway.save(BuildingFactory.create().createBuilding("id1", "building1"));
-		buildingEntityGateway.save(BuildingFactory.create().createBuilding("id2", "building2"));
+		eventPublisher.publish(new BuildingCreated("id1", "building1"));
+		eventPublisher.publish(new BuildingCreated("id2", "building2"));
 
 		// expect
 		when()
@@ -66,8 +67,8 @@ public class BuildingIntegrationTest {
 		// given
 		String nameBuilding1 = UUID.randomUUID().toString();
 		String nameBuilding2 = UUID.randomUUID().toString();
-		buildingEntityGateway.save(BuildingFactory.create().createBuilding("id1", nameBuilding1));
-		buildingEntityGateway.save(BuildingFactory.create().createBuilding("id2", nameBuilding2));
+		eventPublisher.publish(new BuildingCreated("id1", nameBuilding1));
+		eventPublisher.publish(new BuildingCreated("id2", nameBuilding2));
 
 		// expect
 		when()
@@ -82,7 +83,9 @@ public class BuildingIntegrationTest {
 		// given
 		final String building1 = UUID.randomUUID().toString();
 		final String id1 = UUID.randomUUID().toString();
-		buildingEntityGateway.save(BuildingFactory.create().createBuilding(id1, building1, Arrays.asList(TenantFactory.create().createTenant("tid1", "tenant1"), TenantFactory.create().createTenant("tid2", "tenant2"))));
+		eventPublisher.publish(new BuildingCreated(id1, building1));
+		eventPublisher.publish(new TenantAddedToBuilding(id1, "tid1", "tenant1"));
+		eventPublisher.publish(new TenantAddedToBuilding(id1, "tid2", "tenant2"));
 
 		// expect
 		// expect
@@ -122,7 +125,7 @@ public class BuildingIntegrationTest {
 	public void testAddTenantToBuilding() throws InterruptedException {
 		// given
 		final String buildingId = "id1";
-		buildingEntityGateway.save(BuildingFactory.create().createBuilding(buildingId, "building1"));
+		eventPublisher.publish(new BuildingCreated(buildingId, "building1"));
 		String payload = "{\"name\":\"testTenant\"}";
 
 		// expect
@@ -153,10 +156,12 @@ public class BuildingIntegrationTest {
 		// given
 		final String buildingId = "testEvictTenantFromBuilding-id1";
 		final String tenantId1 = "testEvictTenantFromBuilding-tid1";
+		final String tenantId2 = "testEvictTenantFromBuilding-tid2";
+		final String tenant1Name = "testEvictTenantFromBuilding-tenant1";
 		final String tenant2Name = "testEvictTenantFromBuilding-tenant2";
-		buildingEntityGateway.save(BuildingFactory.create().createBuilding(buildingId, "testEvictTenantFromBuilding-building1", Arrays.asList(
-				TenantFactory.create().createTenant(tenantId1, "testEvictTenantFromBuilding-tenant1"), TenantFactory.create().createTenant("testEvictTenantFromBuilding-tid2",
-				tenant2Name))));
+		eventPublisher.publish(new BuildingCreated(buildingId, "testEvictTenantFromBuilding-building1"));
+		eventPublisher.publish(new TenantAddedToBuilding(buildingId, tenantId1, tenant1Name));
+		eventPublisher.publish(new TenantAddedToBuilding(buildingId, tenantId2, tenant2Name));
 
 		// expect
 		when()

@@ -1,21 +1,19 @@
 package be.insaneprogramming.cleanarch.interactor;
 
 import be.insaneprogramming.cleanarch.boundary.EvictTenantFromBuilding;
-import be.insaneprogramming.cleanarch.entity.Building;
-import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
+import be.insaneprogramming.cleanarch.event.EventPublisher;
+import be.insaneprogramming.cleanarch.event.TenantEvictedFromBuilding;
 import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequest;
 
 public class EvictTenantFromBuildingImpl implements EvictTenantFromBuilding {
-	private final BuildingEntityGateway buildingEntityGateway;
+	private final EventPublisher eventPublisher;
 
-	public EvictTenantFromBuildingImpl(BuildingEntityGateway buildingEntityGateway) {
-		this.buildingEntityGateway = buildingEntityGateway;
+	public EvictTenantFromBuildingImpl(EventPublisher eventPublisher) {
+		this.eventPublisher = eventPublisher;
 	}
 
 	@Override
 	public void execute(EvictTenantFromBuildingRequest request) {
-		Building building = buildingEntityGateway.findById(request.getBuildingId());
-		building.evictTenant(request.getTenantId());
-		buildingEntityGateway.save(building);
+		eventPublisher.publish(new TenantEvictedFromBuilding(request.getBuildingId(), request.getTenantId()));
 	}
 }

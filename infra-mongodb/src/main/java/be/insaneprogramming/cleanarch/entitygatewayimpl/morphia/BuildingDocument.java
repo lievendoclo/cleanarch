@@ -23,6 +23,10 @@ public class BuildingDocument {
 		this.tenants = tenants;
 	}
 
+	public BuildingDocument(String id, String name) {
+		this(id, name, new ArrayList<>());
+	}
+
 	public String getId() {
 		return id;
 	}

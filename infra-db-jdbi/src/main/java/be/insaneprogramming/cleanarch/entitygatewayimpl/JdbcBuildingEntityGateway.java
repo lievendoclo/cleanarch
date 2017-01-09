@@ -17,75 +17,34 @@ public class JdbcBuildingEntityGateway implements BuildingEntityGateway {
 		this.dbi = dbi;
 	}
 
-	@Override
-	public String save(Building building) {
-		final Building byId = findById(building.getId());
-		if(byId == null) {
-			return insert(building);
-		} else {
-			return update(building);
-		}
-	}
-
-	private String insert(Building building) {
-		BuildingDao buildingDao = dbi.open(BuildingDao.class);
-		buildingDao.insert(building);
-		buildingDao.close();
-		saveTenants(building);
-		return building.getId();
-	}
-
-	private String update(Building building) {
-		BuildingDao buildingDao = dbi.open(BuildingDao.class);
-		buildingDao.update(building);
-		buildingDao.close();
-		saveTenants(building);
-		return building.getId();
-	}
-
-	private void saveTenants(Building building) {
-		TenantDao tenantDao = dbi.open(TenantDao.class);
-		tenantDao.deleteAllForBuilding(building.getId());
-		tenantDao.close();
-		building.getTenants().forEach(it -> insert(building.getId(), it));
-	}
-
-	private String insert(String buildingId, Tenant tenant) {
-		TenantDao tenantDao = dbi.open(TenantDao.class);
-		tenantDao.insert(buildingId, tenant);
-		tenantDao.close();
-		return tenant.getId();
-	}
-
 	public List<Building> findAll() {
-		BuildingDao buildingDao = dbi.open(BuildingDao.class);
-		final List<Building> buildings = buildingDao.findAll();
-		buildingDao.close();
-		return buildings;
+		try(BuildingDao buildingDao = dbi.open(BuildingDao.class)) {
+			return buildingDao.findAll();
+		}
 	}
 
 	@Override
 	public List<Building> findByNameStartingWith(String name) {
-		BuildingDao buildingDao = dbi.open(BuildingDao.class);
-		final List<Building> buildings = buildingDao.findByNameStartingWith(name);
-		buildingDao.close();
-		return buildings;
+		try(BuildingDao buildingDao = dbi.open(BuildingDao.class)) {
+			final List<Building> buildings = buildingDao.findByNameStartingWith(name);
+			return buildings;
+		}
 	}
 
 	public Building findById(String buildingId) {
-		BuildingDao buildingDao = dbi.open(BuildingDao.class);
-		final Building building = buildingDao.findById(buildingId);
-		buildingDao.close();
-		if(building != null) {
-			findTenantsByBuildingId(buildingId).forEach(building::addTenant);
+		try(BuildingDao buildingDao = dbi.open(BuildingDao.class)) {
+			final Building building = buildingDao.findById(buildingId);
+			if (building != null) {
+				findTenantsByBuildingId(buildingId).forEach(building::addTenant);
+			}
+			return building;
 		}
-		return building;
 	}
 
 	private List<Tenant> findTenantsByBuildingId(String buildingId) {
-		TenantDao tenantDao = dbi.open(TenantDao.class);
-		final List<Tenant> tenantsForBuilding = tenantDao.getTenantsForBuilding(buildingId);
-		tenantDao.close();
-		return tenantsForBuilding;
+		try(TenantDao tenantDao = dbi.open(TenantDao.class)) {
+			final List<Tenant> tenantsForBuilding = tenantDao.getTenantsForBuilding(buildingId);
+			return tenantsForBuilding;
+		}
 	}
 }

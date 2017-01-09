@@ -20,7 +20,7 @@ public class CreateBuildingImplTest {
 	@Before
 	public void initializeComponentUnderTest() {
 		buildingEntityGateway = mock(BuildingEntityGateway.class);
-		createBuilding = new CreateBuildingImpl(buildingEntityGateway);
+		createBuilding = new CreateBuildingImpl(eventPublisher);
 	}
 
 	@Test
