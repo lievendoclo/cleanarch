@@ -1,19 +1,22 @@
 package be.insaneprogramming.cleanarch.requestmodel;
 
 import java.util.Objects;
+import java.util.Optional;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
 public class ListBuildingsRequest {
 	private final String nameStartsWith;
 
-	public ListBuildingsRequest(String nameStartsWith) {
+	private ListBuildingsRequest(@Nullable String nameStartsWith) {
 		this.nameStartsWith = nameStartsWith;
 	}
 
-	public String getNameStartsWith() {
-		return nameStartsWith;
+	public Optional<String> getNameStartsWith() {
+		return Optional.ofNullable(nameStartsWith);
 	}
 
 	@Override
@@ -27,5 +30,18 @@ public class ListBuildingsRequest {
 	@Override
 	public int hashCode() {
 		return Objects.hash(nameStartsWith);
+	}
+
+	public static class Builder {
+		private String nameStartsWith;
+
+		public Builder nameStartsWith(@Nonnull String value) {
+			this.nameStartsWith = value;
+			return this;
+		}
+
+		public ListBuildingsRequest build() {
+			return new ListBuildingsRequest(nameStartsWith);
+		}
 	}
 }

@@ -8,17 +8,15 @@ import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest;
 
 public class CreateBuildingImpl implements CreateBuilding {
 
-	private final BuildingFactory buildingFactory;
 	private final BuildingEntityGateway buildingEntityGateway;
 
-	public CreateBuildingImpl(BuildingFactory buildingFactory, BuildingEntityGateway buildingEntityGateway) {
-		this.buildingFactory = buildingFactory;
+	public CreateBuildingImpl(BuildingEntityGateway buildingEntityGateway) {
 		this.buildingEntityGateway = buildingEntityGateway;
 	}
 
 	@Override
 	public String execute(CreateBuildingRequest request) {
-		Building building = buildingFactory.createBuilding(request.getName());
+		Building building = BuildingFactory.create().createBuilding(request.getName());
 		return buildingEntityGateway.save(building);
 	}
 }

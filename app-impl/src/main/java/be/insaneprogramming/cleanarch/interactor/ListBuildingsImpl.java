@@ -21,8 +21,8 @@ public class ListBuildingsImpl implements ListBuildings {
 	@Override
 	public <T> List<T> execute(ListBuildingsRequest request, BuildingResponseModelPresenter<T> buildingResponseModelPresenter) {
 		final List<Building> buildings;
-		if(request.getNameStartsWith() != null) {
-			buildings = buildingEntityGateway.findByNameStartingWith(request.getNameStartsWith());
+		if(request.getNameStartsWith().isPresent()) {
+			buildings = buildingEntityGateway.findByNameStartingWith(request.getNameStartsWith().get());
 		} else {
 			buildings = buildingEntityGateway.findAll();
 		}

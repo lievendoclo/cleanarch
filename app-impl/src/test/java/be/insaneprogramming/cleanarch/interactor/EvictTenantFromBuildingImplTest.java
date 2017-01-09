@@ -12,7 +12,9 @@ import org.junit.Test;
 
 import be.insaneprogramming.cleanarch.boundary.EvictTenantFromBuilding;
 import be.insaneprogramming.cleanarch.entity.Building;
+import be.insaneprogramming.cleanarch.entity.BuildingFactory;
 import be.insaneprogramming.cleanarch.entity.Tenant;
+import be.insaneprogramming.cleanarch.entity.TenantFactory;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequest;
 
@@ -30,8 +32,8 @@ public class EvictTenantFromBuildingImplTest {
 	public void shouldEvictTenantFromBuilding() {
 		//given
 		List<Tenant> existingTenants = new ArrayList<>();
-		existingTenants.add(new Tenant("tenantId", "John Doe"));
-		Building building = new Building("buildingId", "test", existingTenants);
+		existingTenants.add(TenantFactory.create().createTenant("tenantId", "John Doe"));
+		Building building = BuildingFactory.create().createBuilding("buildingId", "test", existingTenants);
 		doReturn(building).when(buildingEntityGateway).findById("buildingId");
 		EvictTenantFromBuildingRequest request = new EvictTenantFromBuildingRequest("buildingId", "tenantId");
 

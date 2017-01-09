@@ -10,7 +10,6 @@ import org.mockito.ArgumentCaptor;
 
 import be.insaneprogramming.cleanarch.boundary.CreateBuilding;
 import be.insaneprogramming.cleanarch.entity.Building;
-import be.insaneprogramming.cleanarch.entity.BuildingFactory;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest;
 
@@ -21,7 +20,7 @@ public class CreateBuildingImplTest {
 	@Before
 	public void initializeComponentUnderTest() {
 		buildingEntityGateway = mock(BuildingEntityGateway.class);
-		createBuilding = new CreateBuildingImpl(new BuildingFactory(), buildingEntityGateway);
+		createBuilding = new CreateBuildingImpl(buildingEntityGateway);
 	}
 
 	@Test

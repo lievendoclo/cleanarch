@@ -10,17 +10,15 @@ import be.insaneprogramming.cleanarch.requestmodel.AddTenantToBuildingRequest;
 public class AddTenantToBuildingImpl implements AddTenantToBuilding {
 
 	private final BuildingEntityGateway buildingEntityGateway;
-	private final TenantFactory tenantFactory;
 
-	public AddTenantToBuildingImpl(BuildingEntityGateway buildingEntityGateway, TenantFactory tenantFactory) {
+	public AddTenantToBuildingImpl(BuildingEntityGateway buildingEntityGateway) {
 		this.buildingEntityGateway = buildingEntityGateway;
-		this.tenantFactory = tenantFactory;
 	}
 
 	@Override
 	public String execute(AddTenantToBuildingRequest request) {
 		Building building = buildingEntityGateway.findById(request.getBuildingId());
-		Tenant tenant = tenantFactory.createTenant(request.getTenantName());
+		Tenant tenant = TenantFactory.create().createTenant(request.getTenantName());
 		building.addTenant(tenant);
 		buildingEntityGateway.save(building);
 		return tenant.getId();

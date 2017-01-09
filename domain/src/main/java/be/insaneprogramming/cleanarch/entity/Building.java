@@ -8,11 +8,11 @@ public class Building {
 	private String name;
 	private List<Tenant> tenants;
 
-	public Building(String id, String name) {
+	Building(String id, String name) {
 		this(id, name, new ArrayList<>());
 	}
 
-	public Building(String id, String name, List<Tenant> tenants) {
+	Building(String id, String name, List<Tenant> tenants) {
 		this.id = id;
 		this.name = name;
 		this.tenants = tenants;

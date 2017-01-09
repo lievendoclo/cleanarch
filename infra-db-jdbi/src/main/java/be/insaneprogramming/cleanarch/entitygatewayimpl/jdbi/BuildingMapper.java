@@ -7,11 +7,13 @@ import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import be.insaneprogramming.cleanarch.entity.Building;
+import be.insaneprogramming.cleanarch.entity.BuildingFactory;
 
 public class BuildingMapper implements ResultSetMapper<Building> {
 	@Override
 	public Building map(int index, ResultSet rs, StatementContext ctx) throws SQLException {
-		String id = rs.getString("id");
-		return new Building(id, rs.getString("name"));
+		final String buildingId = rs.getString("id");
+		final String buildingName = rs.getString("name");
+		return BuildingFactory.create().createBuilding(buildingId, buildingName);
 	}
 }

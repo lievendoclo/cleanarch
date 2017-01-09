@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import be.insaneprogramming.cleanarch.boundary.AddTenantToBuilding;
 import be.insaneprogramming.cleanarch.entity.Building;
-import be.insaneprogramming.cleanarch.entity.TenantFactory;
+import be.insaneprogramming.cleanarch.entity.BuildingFactory;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 import be.insaneprogramming.cleanarch.requestmodel.AddTenantToBuildingRequest;
 
@@ -21,14 +21,13 @@ public class AddTenantToBuildingImplTest {
 	@Before
 	public void initializeComponentUnderTest() {
 		buildingEntityGateway = mock(BuildingEntityGateway.class);
-		TenantFactory tenantFactory = new TenantFactory();
-		addTenantToBuilding = new AddTenantToBuildingImpl(buildingEntityGateway, tenantFactory);
+		addTenantToBuilding = new AddTenantToBuildingImpl(buildingEntityGateway);
 	}
 	
 	@Test
 	public void shouldAddTenantToBuilding() {
 		//given
-		Building building = new Building("buildingId", "test");
+		Building building = BuildingFactory.create().createBuilding("buildingId", "test");
 		doReturn(building).when(buildingEntityGateway).findById("buildingId");
 		AddTenantToBuildingRequest request = new AddTenantToBuildingRequest("buildingId", "tenantName");
 

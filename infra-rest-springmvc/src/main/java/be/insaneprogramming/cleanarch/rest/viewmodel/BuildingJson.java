@@ -1,7 +1,6 @@
 package be.insaneprogramming.cleanarch.rest.viewmodel;
 
 import java.util.List;
-import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,20 +27,5 @@ public class BuildingJson {
 
 	public List<TenantJson> getTenants() {
 		return tenants;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		BuildingJson that = (BuildingJson) o;
-		return Objects.equals(id, that.id) &&
-				Objects.equals(name, that.name) &&
-				Objects.equals(tenants, that.tenants);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, name, tenants);
 	}
 }

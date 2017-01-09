@@ -3,6 +3,7 @@ package be.insaneprogramming.cleanarch;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -19,8 +20,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.jayway.restassured.RestAssured;
 
-import be.insaneprogramming.cleanarch.entity.Building;
-import be.insaneprogramming.cleanarch.entity.Tenant;
+import be.insaneprogramming.cleanarch.entity.BuildingFactory;
+import be.insaneprogramming.cleanarch.entity.TenantFactory;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 
 @RunWith(SpringRunner.class)
@@ -49,8 +50,8 @@ public class BuildingIntegrationTest {
 	@Test
 	public void testGetAllBuildings() throws InterruptedException {
 		// given
-		buildingEntityGateway.save(new Building("id1", "building1"));
-		buildingEntityGateway.save(new Building("id2", "building2"));
+		buildingEntityGateway.save(BuildingFactory.create().createBuilding("id1", "building1"));
+		buildingEntityGateway.save(BuildingFactory.create().createBuilding("id2", "building2"));
 
 		// expect
 		when()
@@ -65,15 +66,15 @@ public class BuildingIntegrationTest {
 		// given
 		String nameBuilding1 = UUID.randomUUID().toString();
 		String nameBuilding2 = UUID.randomUUID().toString();
-		buildingEntityGateway.save(new Building("id1", nameBuilding1));
-		buildingEntityGateway.save(new Building("id2", nameBuilding2));
+		buildingEntityGateway.save(BuildingFactory.create().createBuilding("id1", nameBuilding1));
+		buildingEntityGateway.save(BuildingFactory.create().createBuilding("id2", nameBuilding2));
 
 		// expect
 		when()
 				.get("/building?nameStartsWith=" + nameBuilding1)
 				.then()
 				.statusCode(200)
-				.body("size()", greaterThan(1));
+				.body("size()", greaterThanOrEqualTo(1));
 	}
 
 	@Test
@@ -81,7 +82,7 @@ public class BuildingIntegrationTest {
 		// given
 		final String building1 = UUID.randomUUID().toString();
 		final String id1 = UUID.randomUUID().toString();
-		buildingEntityGateway.save(new Building(id1, building1, Arrays.asList(new Tenant("tid1", "tenant1"), new Tenant("tid2", "tenant2"))));
+		buildingEntityGateway.save(BuildingFactory.create().createBuilding(id1, building1, Arrays.asList(TenantFactory.create().createTenant("tid1", "tenant1"), TenantFactory.create().createTenant("tid2", "tenant2"))));
 
 		// expect
 		// expect
@@ -104,7 +105,6 @@ public class BuildingIntegrationTest {
 				.body(payload)
 				.contentType("application/json")
 				.when()
-				.log().all()
 				.post("/building")
 				.then()
 				.statusCode(201)
@@ -122,7 +122,7 @@ public class BuildingIntegrationTest {
 	public void testAddTenantToBuilding() throws InterruptedException {
 		// given
 		final String buildingId = "id1";
-		buildingEntityGateway.save(new Building(buildingId, "building1"));
+		buildingEntityGateway.save(BuildingFactory.create().createBuilding(buildingId, "building1"));
 		String payload = "{\"name\":\"testTenant\"}";
 
 		// expect
@@ -154,7 +154,8 @@ public class BuildingIntegrationTest {
 		final String buildingId = "testEvictTenantFromBuilding-id1";
 		final String tenantId1 = "testEvictTenantFromBuilding-tid1";
 		final String tenant2Name = "testEvictTenantFromBuilding-tenant2";
-		buildingEntityGateway.save(new Building(buildingId, "testEvictTenantFromBuilding-building1", Arrays.asList(new Tenant(tenantId1, "testEvictTenantFromBuilding-tenant1"), new Tenant("testEvictTenantFromBuilding-tid2",
+		buildingEntityGateway.save(BuildingFactory.create().createBuilding(buildingId, "testEvictTenantFromBuilding-building1", Arrays.asList(
+				TenantFactory.create().createTenant(tenantId1, "testEvictTenantFromBuilding-tenant1"), TenantFactory.create().createTenant("testEvictTenantFromBuilding-tid2",
 				tenant2Name))));
 
 		// expect

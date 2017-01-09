@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriTemplate;
 
@@ -25,9 +24,9 @@ import be.insaneprogramming.cleanarch.requestmodel.AddTenantToBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.GetBuildingRequest;
-import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest;
 import be.insaneprogramming.cleanarch.rest.payloadmodel.AddTenantToBuildingJsonPayload;
 import be.insaneprogramming.cleanarch.rest.payloadmodel.CreateBuildingJsonPayload;
+import be.insaneprogramming.cleanarch.rest.requestparam.ListBuildingsRequestParams;
 import be.insaneprogramming.cleanarch.rest.viewmodel.BuildingJson;
 
 @RestController
@@ -61,8 +60,8 @@ public class BuildingController {
 	}
 
 	@GetMapping
-	public List<BuildingJson> find(@RequestParam(value = "nameStartsWith", required = false) String name)  {
-		return listBuildings.execute(new ListBuildingsRequest(name), new JsonBuildingResponseModelPresenter());
+	public List<BuildingJson> find(ListBuildingsRequestParams params)  {
+		return listBuildings.execute(params.toRequest(), new JsonBuildingResponseModelPresenter());
 	}
 
 	@GetMapping("/{buildingId}")

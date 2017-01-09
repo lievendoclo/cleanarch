@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import be.insaneprogramming.cleanarch.boundary.ListBuildings;
 import be.insaneprogramming.cleanarch.entity.Building;
+import be.insaneprogramming.cleanarch.entity.BuildingFactory;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest;
 import be.insaneprogramming.cleanarch.responsemodel.BuildingResponseModel;
@@ -30,9 +31,9 @@ public class ListBuildingsImplTest {
 	public void shouldFindBuildingsWithoutFilter() {
 		//given
 		List<Building> buildingList = new ArrayList<>();
-		buildingList.add(new Building("buildingId", "buildingName"));
+		buildingList.add(BuildingFactory.create().createBuilding("buildingId", "buildingName"));
 		doReturn(buildingList).when(buildingEntityGateway).findAll();
-		ListBuildingsRequest request = new ListBuildingsRequest(null);
+		ListBuildingsRequest request = new ListBuildingsRequest();
 
 		//when
 		List<String> buildings = listBuildings.execute(request, BuildingResponseModel::getId);
@@ -46,7 +47,7 @@ public class ListBuildingsImplTest {
 		//given
 		String filter = "name";
 		List<Building> buildingList = new ArrayList<>();
-		buildingList.add(new Building("buildingId", "buildingName"));
+		buildingList.add(BuildingFactory.create().createBuilding("buildingId", "buildingName"));
 		doReturn(buildingList).when(buildingEntityGateway).findByNameStartingWith(filter);
 		ListBuildingsRequest request = new ListBuildingsRequest(filter);
 

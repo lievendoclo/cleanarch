@@ -15,13 +15,9 @@ import be.insaneprogramming.cleanarch.entitygatewayimpl.jpa.TenantJpaEntity;
 
 public class JpaBuildingEntityGateway implements BuildingEntityGateway {
 	private final BuildingJpaEntityRepository buildingJpaEntityRepository;
-	private final BuildingFactory buildingFactory;
-	private final TenantFactory tenantFactory;
 
-	public JpaBuildingEntityGateway(BuildingJpaEntityRepository buildingJpaEntityRepository, BuildingFactory buildingFactory, TenantFactory tenantFactory) {
+	public JpaBuildingEntityGateway(BuildingJpaEntityRepository buildingJpaEntityRepository) {
 		this.buildingJpaEntityRepository = buildingJpaEntityRepository;
-		this.buildingFactory = buildingFactory;
-		this.tenantFactory = tenantFactory;
 	}
 
 	public String save(Building building) {
@@ -52,7 +48,7 @@ public class JpaBuildingEntityGateway implements BuildingEntityGateway {
 	}
 
 	private Building toDomain(BuildingJpaEntity entity) {
-		Building building = buildingFactory.createBuilding(entity.getId(), entity.getName());
+		Building building = BuildingFactory.create().createBuilding(entity.getId(), entity.getName());
 		entity.getTenants().stream().map(this::toDomain).forEach(building::addTenant);
 		return building;
 	}
@@ -65,6 +61,6 @@ public class JpaBuildingEntityGateway implements BuildingEntityGateway {
 	}
 
 	private Tenant toDomain(TenantJpaEntity entity) {
-		return tenantFactory.createTenant(entity.getId(), entity.getName());
+		return TenantFactory.create().createTenant(entity.getId(), entity.getName());
 	}
 }

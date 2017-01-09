@@ -2,6 +2,7 @@ package be.insaneprogramming.cleanarch.rest;
 
 import java.util.List;
 
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -9,7 +10,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -23,9 +23,9 @@ import be.insaneprogramming.cleanarch.requestmodel.AddTenantToBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.EvictTenantFromBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.GetBuildingRequest;
-import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest;
 import be.insaneprogramming.cleanarch.rest.payloadmodel.AddTenantToBuildingJsonPayload;
 import be.insaneprogramming.cleanarch.rest.payloadmodel.CreateBuildingJsonPayload;
+import be.insaneprogramming.cleanarch.rest.requestparam.ListBuildingRequestParams;
 import be.insaneprogramming.cleanarch.rest.viewmodel.BuildingJson;
 
 @Path(BuildingResource.RESOURCE_URI_TEMPLATE)
@@ -60,8 +60,8 @@ public class BuildingResource {
 
 	@GET
 	@Produces("application/json")
-	public List<BuildingJson> list(@QueryParam("nameStartsWith") String nameStartsWith)  {
-		return listBuildings.execute(new ListBuildingsRequest(nameStartsWith), new JsonBuildingResponseModelPresenter());
+	public List<BuildingJson> list(@BeanParam ListBuildingRequestParams params)  {
+		return listBuildings.execute(params.toRequest(), new JsonBuildingResponseModelPresenter());
 	}
 
 	@GET
