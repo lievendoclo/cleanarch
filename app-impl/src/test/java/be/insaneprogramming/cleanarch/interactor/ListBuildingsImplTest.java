@@ -33,7 +33,7 @@ public class ListBuildingsImplTest {
 		List<Building> buildingList = new ArrayList<>();
 		buildingList.add(BuildingFactory.create().createBuilding("buildingId", "buildingName"));
 		doReturn(buildingList).when(buildingEntityGateway).findAll();
-		ListBuildingsRequest request = new ListBuildingsRequest();
+		ListBuildingsRequest request = new ListBuildingsRequest.Builder().build();
 
 		//when
 		List<String> buildings = listBuildings.execute(request, BuildingResponseModel::getId);
@@ -49,7 +49,7 @@ public class ListBuildingsImplTest {
 		List<Building> buildingList = new ArrayList<>();
 		buildingList.add(BuildingFactory.create().createBuilding("buildingId", "buildingName"));
 		doReturn(buildingList).when(buildingEntityGateway).findByNameStartingWith(filter);
-		ListBuildingsRequest request = new ListBuildingsRequest(filter);
+		ListBuildingsRequest request = new ListBuildingsRequest.Builder().nameStartsWith(filter).build();
 
 		//when
 		List<String> buildings = listBuildings.execute(request, BuildingResponseModel::getId);
