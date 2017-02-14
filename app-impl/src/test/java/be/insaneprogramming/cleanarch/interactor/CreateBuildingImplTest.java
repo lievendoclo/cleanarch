@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -31,10 +33,11 @@ public class CreateBuildingImplTest {
 		CreateBuildingRequest request = new CreateBuildingRequest("buildingName");
 
 		//when
-		String buildingId = createBuilding.execute(request);
+		final AtomicReference<String> id = new AtomicReference<>();
+		createBuilding.execute(request, id::set);
 
 		//then
-		assertThat(buildingId).isEqualTo("buildingId");
+		assertThat(id.get()).isEqualTo("buildingId");
 		assertThat(buildingArg.getValue().getName()).isEqualTo("buildingName");
 	}
 }

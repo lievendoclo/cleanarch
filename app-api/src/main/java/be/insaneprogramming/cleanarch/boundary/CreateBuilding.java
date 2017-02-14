@@ -1,9 +1,11 @@
 package be.insaneprogramming.cleanarch.boundary;
 
+import java.util.function.Consumer;
+
 import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest;
 
 @FunctionalInterface
 @Boundary
 public interface CreateBuilding {
-	String execute(CreateBuildingRequest request);
+	void execute(CreateBuildingRequest request, Consumer<String> idConsumer);
 }

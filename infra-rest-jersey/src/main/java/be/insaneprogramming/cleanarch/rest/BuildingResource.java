@@ -1,6 +1,7 @@
 package be.insaneprogramming.cleanarch.rest;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -18,6 +19,7 @@ import be.insaneprogramming.cleanarch.boundary.CreateBuilding;
 import be.insaneprogramming.cleanarch.boundary.EvictTenantFromBuilding;
 import be.insaneprogramming.cleanarch.boundary.GetBuilding;
 import be.insaneprogramming.cleanarch.boundary.ListBuildings;
+import be.insaneprogramming.cleanarch.presenter.JsonBuildingResponseModelListPresenter;
 import be.insaneprogramming.cleanarch.presenter.JsonBuildingResponseModelPresenter;
 import be.insaneprogramming.cleanarch.requestmodel.AddTenantToBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest;
@@ -52,31 +54,37 @@ public class BuildingResource {
 	@POST
 	@Consumes("application/json")
 	public Response create(CreateBuildingJsonPayload payload) {
-		String id = createBuilding.execute(new CreateBuildingRequest(payload.getName()));
-		return Response.created(UriBuilder.fromPath(GET_SINGLE_BUILDING_URI_TEMPLATE).resolveTemplate("buildingId", id).build())
-				.header("X-Created-Id", id)
+		final AtomicReference<String> id = new AtomicReference<>();
+		createBuilding.execute(new CreateBuildingRequest(payload.getName()), id::set);
+		return Response.created(UriBuilder.fromPath(GET_SINGLE_BUILDING_URI_TEMPLATE).resolveTemplate("buildingId", id.get()).build())
+				.header("X-Created-Id", id.get())
 				.build();
 	}
 
 	@GET
 	@Produces("application/json")
 	public List<BuildingJson> list(@BeanParam ListBuildingRequestParams params)  {
-		return listBuildings.execute(params.toRequest(), new JsonBuildingResponseModelPresenter());
+		final JsonBuildingResponseModelListPresenter presenter = new JsonBuildingResponseModelListPresenter();
+		listBuildings.execute(params.toRequest(), presenter);
+		return presenter.getPresentedResult();
 	}
 
 	@GET
 	@Produces("application/json")
 	@Path("/{buildingId}")
 	public BuildingJson get(@PathParam(("buildingId")) String buildingId)  {
-		return getBuilding.execute(new GetBuildingRequest(buildingId), new JsonBuildingResponseModelPresenter());
+		final JsonBuildingResponseModelPresenter presenter = new JsonBuildingResponseModelPresenter();
+		getBuilding.execute(new GetBuildingRequest(buildingId), presenter);
+		return presenter.getPresentedResult();
 	}
 
 	@POST
 	@Consumes("application/json")
 	@Path("{buildingId}/tenant")
 	public Response addTenant(@PathParam("buildingId") String buildingId, AddTenantToBuildingJsonPayload payload) {
-		String id = addTenantToBuilding.execute(new AddTenantToBuildingRequest(buildingId, payload.getName()));
-		return Response.created(UriBuilder.fromPath(GET_BUILDING_TENANT_URI_TEMPLATE).resolveTemplate("buildingId", buildingId).resolveTemplate("tenantId", id).build()).build();
+		final AtomicReference<String> id = new AtomicReference<>();
+		addTenantToBuilding.execute(new AddTenantToBuildingRequest(buildingId, payload.getName()), id::set);
+		return Response.created(UriBuilder.fromPath(GET_BUILDING_TENANT_URI_TEMPLATE).resolveTemplate("buildingId", buildingId).resolveTemplate("tenantId", id.get()).build()).build();
 	}
 
 	@DELETE

@@ -1,4 +1,0 @@
-@ParametersAreNonnullByDefault
-package be.insaneprogramming.cleanarch.presenter;
-
-import javax.annotation.ParametersAreNonnullByDefault;

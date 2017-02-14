@@ -1,9 +1,9 @@
 package be.insaneprogramming.cleanarch.interactor;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import be.insaneprogramming.cleanarch.boundary.BuildingResponseModelPresenter;
 import be.insaneprogramming.cleanarch.boundary.ListBuildings;
 import be.insaneprogramming.cleanarch.entity.Building;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
@@ -19,16 +19,16 @@ public class ListBuildingsImpl implements ListBuildings {
 	}
 
 	@Override
-	public <T> List<T> execute(ListBuildingsRequest request, BuildingResponseModelPresenter<T> buildingResponseModelPresenter) {
+	public void execute(ListBuildingsRequest request, Consumer<BuildingResponseModel> buildingResponseModelConsumer) {
 		final List<Building> buildings;
 		if(request.getNameStartsWith().isPresent()) {
 			buildings = buildingEntityGateway.findByNameStartingWith(request.getNameStartsWith().get());
 		} else {
 			buildings = buildingEntityGateway.findAll();
 		}
-		return buildings.stream().map(b -> {
+		buildings.stream().map(b -> {
 						List<TenantResponseModel> tenantResponseModels = b.getTenants().stream().map(it -> new TenantResponseModel(it.getId(), it.getName())).collect(Collectors.toList());
 							return new BuildingResponseModel(b.getId(), b.getName(), tenantResponseModels);
-						}).map(buildingResponseModelPresenter::present).collect(Collectors.toList());
+						}).forEach(buildingResponseModelConsumer);
 	}
 }

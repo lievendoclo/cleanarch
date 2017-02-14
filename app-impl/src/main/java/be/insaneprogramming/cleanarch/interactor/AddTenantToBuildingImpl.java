@@ -1,5 +1,7 @@
 package be.insaneprogramming.cleanarch.interactor;
 
+import java.util.function.Consumer;
+
 import be.insaneprogramming.cleanarch.boundary.AddTenantToBuilding;
 import be.insaneprogramming.cleanarch.entity.Building;
 import be.insaneprogramming.cleanarch.entity.Tenant;
@@ -16,11 +18,11 @@ public class AddTenantToBuildingImpl implements AddTenantToBuilding {
 	}
 
 	@Override
-	public String execute(AddTenantToBuildingRequest request) {
+	public void execute(AddTenantToBuildingRequest request, Consumer<String> idConsumer) {
 		Building building = buildingEntityGateway.findById(request.getBuildingId());
 		Tenant tenant = TenantFactory.create().createTenant(request.getTenantName());
 		building.addTenant(tenant);
 		buildingEntityGateway.save(building);
-		return tenant.getId();
+		idConsumer.accept(tenant.getId());
 	}
 }

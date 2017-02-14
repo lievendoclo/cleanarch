@@ -3,6 +3,7 @@ package be.insaneprogramming.cleanarch.rest;
 import static be.insaneprogramming.cleanarch.rest.BuildingController.RESOURCE_URI_TEMPLATE;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +20,7 @@ import be.insaneprogramming.cleanarch.boundary.CreateBuilding;
 import be.insaneprogramming.cleanarch.boundary.EvictTenantFromBuilding;
 import be.insaneprogramming.cleanarch.boundary.GetBuilding;
 import be.insaneprogramming.cleanarch.boundary.ListBuildings;
+import be.insaneprogramming.cleanarch.presenter.JsonBuildingResponseModelListPresenter;
 import be.insaneprogramming.cleanarch.presenter.JsonBuildingResponseModelPresenter;
 import be.insaneprogramming.cleanarch.requestmodel.AddTenantToBuildingRequest;
 import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest;
@@ -53,26 +55,32 @@ public class BuildingController {
 
 	@PostMapping
 	public ResponseEntity create(@RequestBody CreateBuildingJsonPayload payload) {
-		String id = createBuilding.execute(new CreateBuildingRequest(payload.getName()));
-		return ResponseEntity.created(new UriTemplate(GET_SINGLE_BUILDING_URI_TEMPLATE).expand(id).normalize())
-				.header("X-Created-Id", id)
+		final AtomicReference<String> id = new AtomicReference<>();
+		createBuilding.execute(new CreateBuildingRequest(payload.getName()), id::set);
+		return ResponseEntity.created(new UriTemplate(GET_SINGLE_BUILDING_URI_TEMPLATE).expand(id.get()).normalize())
+				.header("X-Created-Id", id.get())
 				.build();
 	}
 
 	@GetMapping
 	public List<BuildingJson> find(ListBuildingsRequestParams params)  {
-		return listBuildings.execute(params.toRequest(), new JsonBuildingResponseModelPresenter());
+		final JsonBuildingResponseModelListPresenter presenter = new JsonBuildingResponseModelListPresenter();
+		listBuildings.execute(params.toRequest(), presenter);
+		return presenter.getPresentedResult();
 	}
 
 	@GetMapping("/{buildingId}")
 	public BuildingJson get(@PathVariable String buildingId)  {
-		return getBuilding.execute(new GetBuildingRequest(buildingId), new JsonBuildingResponseModelPresenter());
+		final JsonBuildingResponseModelPresenter presenter = new JsonBuildingResponseModelPresenter();
+		getBuilding.execute(new GetBuildingRequest(buildingId), presenter);
+		return presenter.getPresentedResult();
 	}
 
 	@PostMapping("{buildingId}/tenant")
 	public ResponseEntity addTenant(@PathVariable("buildingId") String buildingId, @RequestBody AddTenantToBuildingJsonPayload payload) {
-		String id = addTenantToBuilding.execute(new AddTenantToBuildingRequest(buildingId, payload.getName()));
-		return ResponseEntity.created(new UriTemplate(GET_BUILDING_TENANT_URI_TEMPLATE).expand(buildingId, id).normalize()).build();
+		final AtomicReference<String> id = new AtomicReference<>();
+		addTenantToBuilding.execute(new AddTenantToBuildingRequest(buildingId, payload.getName()), id::set);
+		return ResponseEntity.created(new UriTemplate(GET_BUILDING_TENANT_URI_TEMPLATE).expand(buildingId, id.get()).normalize()).build();
 	}
 
 	@DeleteMapping("{buildingId}/tenant/{tenantId}")

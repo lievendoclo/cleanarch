@@ -15,7 +15,6 @@ import be.insaneprogramming.cleanarch.entity.Building;
 import be.insaneprogramming.cleanarch.entity.BuildingFactory;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest;
-import be.insaneprogramming.cleanarch.responsemodel.BuildingResponseModel;
 
 public class ListBuildingsImplTest {
 	private ListBuildings listBuildings;
@@ -36,10 +35,11 @@ public class ListBuildingsImplTest {
 		ListBuildingsRequest request = new ListBuildingsRequest.Builder().build();
 
 		//when
-		List<String> buildings = listBuildings.execute(request, BuildingResponseModel::getId);
+		List<String> ids = new ArrayList<>();
+		listBuildings.execute(request, buildingResponseModel -> ids.add(buildingResponseModel.getId()));
 
 		//then
-		assertThat(buildings).hasSize(1);
+		assertThat(ids).hasSize(1);
 	}
 
 	@Test
@@ -52,9 +52,10 @@ public class ListBuildingsImplTest {
 		ListBuildingsRequest request = new ListBuildingsRequest.Builder().nameStartsWith(filter).build();
 
 		//when
-		List<String> buildings = listBuildings.execute(request, BuildingResponseModel::getId);
+		List<String> ids = new ArrayList<>();
+		listBuildings.execute(request, buildingResponseModel -> ids.add(buildingResponseModel.getId()));
 
 		//then
-		assertThat(buildings).hasSize(1);
+		assertThat(ids).hasSize(1);
 	}
 }

@@ -1,9 +1,12 @@
 package be.insaneprogramming.cleanarch.boundary;
 
+import java.util.function.Consumer;
+
 import be.insaneprogramming.cleanarch.requestmodel.GetBuildingRequest;
+import be.insaneprogramming.cleanarch.responsemodel.BuildingResponseModel;
 
 @FunctionalInterface
 @Boundary
 public interface GetBuilding {
-	<T> T execute(GetBuildingRequest request, BuildingResponseModelPresenter<T> presenter);
+	void execute(GetBuildingRequest request, Consumer<BuildingResponseModel> responseModelFunction);
 }

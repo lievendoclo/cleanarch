@@ -32,7 +32,7 @@ public class AddTenantToBuildingImplTest {
 		AddTenantToBuildingRequest request = new AddTenantToBuildingRequest("buildingId", "tenantName");
 
  		//when
-		addTenantToBuilding.execute(request);
+		addTenantToBuilding.execute(request, s -> {});
 
 		//then
 		assertThat(building.getTenants()).hasSize(1);
