@@ -2,7 +2,6 @@ package be.insaneprogramming.cleanarch.interactor;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import be.insaneprogramming.cleanarch.boundary.ListBuildings;
@@ -24,21 +23,19 @@ public class ListBuildingsImpl implements ListBuildings {
 	public void execute(ListBuildingsRequest request, Consumer<BuildingResponseModel> buildingResponseModelConsumer) {
 		final List<Building> buildings = findBuildings(request);
 		buildings.stream()
-				.map(getBuildingToBuildingResponseModelTransformer())
+				.map(this::getBuildingResponseModel)
 				.forEach(buildingResponseModelConsumer);
 	}
 
-	private Function<Building, BuildingResponseModel> getBuildingToBuildingResponseModelTransformer() {
-		return b -> {
-				List<TenantResponseModel> tenantResponseModels = b.getTenants().stream()
-						.map(getTenantToTenantResponseModelTransformer())
-						.collect(Collectors.toList());
-				return new BuildingResponseModel(b.getId(), b.getName(), tenantResponseModels);
-			};
+	private BuildingResponseModel getBuildingResponseModel(Building b) {
+		List<TenantResponseModel> tenantResponseModels = b.getTenants().stream()
+				.map(this::getTenantResponseModel)
+				.collect(Collectors.toList());
+		return new BuildingResponseModel(b.getId(), b.getName(), tenantResponseModels);
 	}
 
-	private Function<Tenant, TenantResponseModel> getTenantToTenantResponseModelTransformer() {
-		return it -> new TenantResponseModel(it.getId(), it.getName());
+	private TenantResponseModel getTenantResponseModel(Tenant t) {
+		return new TenantResponseModel(t.getId(), t.getName());
 	}
 
 	private List<Building> findBuildings(ListBuildingsRequest request) {
