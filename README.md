@@ -1,3 +1,5 @@
+![Build status](https://travis-ci.org/lievendoclo/cleanarch.svg?branch=master)
+
 # Clean Architecture in Java
  
 Some time ago Robert C. Martin published an interesting article about how
