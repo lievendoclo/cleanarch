@@ -135,6 +135,3 @@ project(":springboot-deployment") {
 		testCompile "com.jayway.restassured:spring-mock-mvc:2.9.0"
 	}
 }
-
-project(":osgi-deployment") {
-}
