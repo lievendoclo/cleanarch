@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import be.insaneprogramming.cleanarch.boundary.GetBuilding;
 import be.insaneprogramming.cleanarch.entity.Building;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
@@ -11,6 +13,7 @@ import be.insaneprogramming.cleanarch.requestmodel.GetBuildingRequest;
 import be.insaneprogramming.cleanarch.responsemodel.BuildingResponseModel;
 import be.insaneprogramming.cleanarch.responsemodel.TenantResponseModel;
 
+@Transactional
 public class GetBuildingImpl implements GetBuilding {
 	private BuildingEntityGateway buildingEntityGateway;
 
