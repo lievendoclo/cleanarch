@@ -39,7 +39,7 @@ public class MongoDbBuildingEntityGateway implements BuildingEntityGateway {
 	@Override
 	public List<Building> findByNameStartingWith(String name) {
 		final Query<BuildingDocument> query = datastore.createQuery(BuildingDocument.class);
-		query.criteria("name").startsWith("name");
+		query.criteria("name").startsWith(name);
 		return query.asList().stream().map(this::toDomain).collect(toList());
 	}
 
