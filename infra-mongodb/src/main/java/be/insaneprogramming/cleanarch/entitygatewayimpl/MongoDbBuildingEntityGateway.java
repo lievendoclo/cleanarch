@@ -4,6 +4,8 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 import org.mongodb.morphia.query.Query;
@@ -18,6 +20,7 @@ import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 import be.insaneprogramming.cleanarch.entitygatewayimpl.morphia.BuildingDocument;
 import be.insaneprogramming.cleanarch.entitygatewayimpl.morphia.TenantDocument;
 
+@Named
 public class MongoDbBuildingEntityGateway implements BuildingEntityGateway {
 	private final Datastore datastore;
 

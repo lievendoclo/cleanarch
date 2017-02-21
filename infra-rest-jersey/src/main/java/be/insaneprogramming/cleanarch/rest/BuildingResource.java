@@ -3,6 +3,7 @@ package be.insaneprogramming.cleanarch.rest;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.inject.Named;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -31,6 +32,7 @@ import be.insaneprogramming.cleanarch.rest.requestparam.ListBuildingRequestParam
 import be.insaneprogramming.cleanarch.rest.viewmodel.BuildingJson;
 
 @Path(BuildingResource.RESOURCE_URI_TEMPLATE)
+@Named
 public class BuildingResource {
 	static final String RESOURCE_URI_TEMPLATE = "/building";
 	private static final String GET_SINGLE_BUILDING_URI_TEMPLATE = RESOURCE_URI_TEMPLATE + "/{buildingId}";

@@ -2,6 +2,7 @@ package be.insaneprogramming.cleanarch.interactor;
 
 import java.util.function.Consumer;
 
+import javax.inject.Named;
 import javax.transaction.Transactional;
 
 import be.insaneprogramming.cleanarch.boundary.CreateBuilding;
@@ -11,6 +12,7 @@ import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 import be.insaneprogramming.cleanarch.requestmodel.CreateBuildingRequest;
 
 @Transactional
+@Named
 public class CreateBuildingImpl implements CreateBuilding {
 
 	private final BuildingEntityGateway buildingEntityGateway;

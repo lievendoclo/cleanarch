@@ -2,6 +2,7 @@ package be.insaneprogramming.cleanarch.interactor;
 
 import java.util.function.Consumer;
 
+import javax.inject.Named;
 import javax.transaction.Transactional;
 
 import be.insaneprogramming.cleanarch.boundary.AddTenantToBuilding;
@@ -12,6 +13,7 @@ import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 import be.insaneprogramming.cleanarch.requestmodel.AddTenantToBuildingRequest;
 
 @Transactional
+@Named
 public class AddTenantToBuildingImpl implements AddTenantToBuilding {
 
 	private final BuildingEntityGateway buildingEntityGateway;

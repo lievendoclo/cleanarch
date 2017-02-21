@@ -2,6 +2,9 @@ package be.insaneprogramming.cleanarch.entitygatewayimpl;
 
 import java.util.List;
 
+import javax.inject.Named;
+import javax.sql.DataSource;
+
 import org.skife.jdbi.v2.DBI;
 
 import be.insaneprogramming.cleanarch.entity.Building;
@@ -10,11 +13,12 @@ import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 import be.insaneprogramming.cleanarch.entitygatewayimpl.jdbi.BuildingDao;
 import be.insaneprogramming.cleanarch.entitygatewayimpl.jdbi.TenantDao;
 
+@Named
 public class JdbcBuildingEntityGateway implements BuildingEntityGateway {
 	private final DBI dbi;
 
-	public JdbcBuildingEntityGateway(DBI dbi) {
-		this.dbi = dbi;
+	public JdbcBuildingEntityGateway(DataSource dataSource) {
+		this.dbi = new DBI(dataSource);
 	}
 
 	@Override
@@ -28,64 +32,61 @@ public class JdbcBuildingEntityGateway implements BuildingEntityGateway {
 	}
 
 	private String insert(Building building) {
-		BuildingDao buildingDao = dbi.open(BuildingDao.class);
-		buildingDao.insert(building);
-		buildingDao.close();
-		saveTenants(building);
-		return building.getId();
+		try(BuildingDao buildingDao = dbi.open(BuildingDao.class)) {
+			buildingDao.insert(building);
+			saveTenants(building);
+			return building.getId();
+		}
 	}
 
 	private String update(Building building) {
-		BuildingDao buildingDao = dbi.open(BuildingDao.class);
-		buildingDao.update(building);
-		buildingDao.close();
-		saveTenants(building);
-		return building.getId();
+		try(BuildingDao buildingDao = dbi.open(BuildingDao.class)) {
+			buildingDao.update(building);
+			saveTenants(building);
+			return building.getId();
+		}
 	}
 
 	private void saveTenants(Building building) {
-		TenantDao tenantDao = dbi.open(TenantDao.class);
-		tenantDao.deleteAllForBuilding(building.getId());
-		tenantDao.close();
-		building.getTenants().forEach(it -> insert(building.getId(), it));
+		try(TenantDao tenantDao = dbi.open(TenantDao.class)) {
+			tenantDao.deleteAllForBuilding(building.getId());
+			building.getTenants().forEach(it -> insert(building.getId(), it));
+		}
 	}
 
 	private String insert(String buildingId, Tenant tenant) {
-		TenantDao tenantDao = dbi.open(TenantDao.class);
-		tenantDao.insert(buildingId, tenant);
-		tenantDao.close();
-		return tenant.getId();
+		try(TenantDao tenantDao = dbi.open(TenantDao.class)) {
+			tenantDao.insert(buildingId, tenant);
+			return tenant.getId();
+		}
 	}
 
 	public List<Building> findAll() {
-		BuildingDao buildingDao = dbi.open(BuildingDao.class);
-		final List<Building> buildings = buildingDao.findAll();
-		buildingDao.close();
-		return buildings;
+		try(BuildingDao buildingDao = dbi.open(BuildingDao.class)) {
+			return buildingDao.findAll();
+		}
 	}
 
 	@Override
 	public List<Building> findByNameStartingWith(String name) {
-		BuildingDao buildingDao = dbi.open(BuildingDao.class);
-		final List<Building> buildings = buildingDao.findByNameStartingWith(name);
-		buildingDao.close();
-		return buildings;
+		try(BuildingDao buildingDao = dbi.open(BuildingDao.class)) {
+			return buildingDao.findByNameStartingWith(name);
+		}
 	}
 
 	public Building findById(String buildingId) {
-		BuildingDao buildingDao = dbi.open(BuildingDao.class);
-		final Building building = buildingDao.findById(buildingId);
-		buildingDao.close();
-		if(building != null) {
-			findTenantsByBuildingId(buildingId).forEach(building::addTenant);
+		try(BuildingDao buildingDao = dbi.open(BuildingDao.class)) {
+			final Building building = buildingDao.findById(buildingId);
+			if (building != null) {
+				findTenantsByBuildingId(buildingId).forEach(building::addTenant);
+			}
+			return building;
 		}
-		return building;
 	}
 
 	private List<Tenant> findTenantsByBuildingId(String buildingId) {
-		TenantDao tenantDao = dbi.open(TenantDao.class);
-		final List<Tenant> tenantsForBuilding = tenantDao.getTenantsForBuilding(buildingId);
-		tenantDao.close();
-		return tenantsForBuilding;
+		try(TenantDao tenantDao = dbi.open(TenantDao.class)) {
+			return tenantDao.getTenantsForBuilding(buildingId);
+		}
 	}
 }

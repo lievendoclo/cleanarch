@@ -46,6 +46,7 @@ project(":app-impl") {
 		compile project(":app-api")
 		compile project(":domain")
 		compile 'javax.transaction:javax.transaction-api:1.2'
+		compile 'javax.inject:javax.inject:1'
 
 		testCompile "org.mockito:mockito-core"
 	}
@@ -57,6 +58,7 @@ project(":domain") {
 project(":infra-rest-springmvc") {
 	dependencies {
 		compile project(":app-api")
+		compile 'javax.inject:javax.inject:1'
 
 		compile "org.springframework:spring-webmvc"
 		compile "com.fasterxml.jackson.core:jackson-databind"
@@ -69,6 +71,7 @@ project(":infra-rest-springmvc") {
 project(":infra-rest-jersey") {
 	dependencies {
 		compile project(":app-api")
+		compile 'javax.inject:javax.inject:1'
 
 		compile "com.fasterxml.jackson.core:jackson-databind"
 		compile "org.glassfish.jersey.core:jersey-server"
@@ -81,6 +84,7 @@ project(":infra-rest-jersey") {
 project(":infra-db-jpa") {
 	dependencies {
 		compile project(":domain")
+		compile 'javax.inject:javax.inject:1'
 		compile "org.springframework.data:spring-data-jpa"
 		compile "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final"
 	}
@@ -89,6 +93,7 @@ project(":infra-db-jpa") {
 project(":infra-mongodb") {
 	dependencies {
 		compile project(":domain")
+		compile 'javax.inject:javax.inject:1'
 		compile "org.mongodb.morphia:morphia:1.2.1"
 	}
 }
@@ -96,6 +101,7 @@ project(":infra-mongodb") {
 project(":infra-db-jdbi") {
 	dependencies {
 		compile project(":domain")
+		compile 'javax.inject:javax.inject:1'
 		compile "org.jdbi:jdbi:2.77"
 	}
 }
@@ -108,9 +114,9 @@ project(":springboot-deployment") {
 		compile project(":app-api")
 		compile project(":app-impl")
 		compile project(":infra-db-jpa")
-		compile project(":infra-rest-jersey")
+		compile project(":infra-rest-springmvc")
 
-		compile "org.springframework.boot:spring-boot-starter-jersey"
+		compile "org.springframework.boot:spring-boot-starter-web"
 		compile "org.springframework.boot:spring-boot-actuator"
 		compile "org.springframework.boot:spring-boot-starter-data-jpa"
 

@@ -10,7 +10,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.Mapper;
 
 import be.insaneprogramming.cleanarch.entity.Building;
 
-public interface BuildingDao {
+public interface BuildingDao extends AutoCloseable {
 	@SqlUpdate("INSERT INTO building(id, name) VALUES (:b.id, :b.name)")
 	void insert(@BindBean("b") Building building);
 

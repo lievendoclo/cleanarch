@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import javax.inject.Named;
 import javax.transaction.Transactional;
 
 import be.insaneprogramming.cleanarch.boundary.ListBuildings;
@@ -15,6 +16,7 @@ import be.insaneprogramming.cleanarch.responsemodel.BuildingResponseModel;
 import be.insaneprogramming.cleanarch.responsemodel.TenantResponseModel;
 
 @Transactional
+@Named
 public class ListBuildingsImpl implements ListBuildings {
 	private final BuildingEntityGateway buildingEntityGateway;
 
