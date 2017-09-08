@@ -10,6 +10,8 @@ buildscript {
 		classpath "io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE"
 		classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
 		classpath "gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:1.0.7"
+                classpath 'com.github.ben-manes:gradle-versions-plugin:0.15.0'
+                classpath 'org.owasp:dependency-check-gradle:2.1.1'
 	}
 }
 
@@ -17,6 +19,8 @@ subprojects {
 	apply plugin: "java"
 	apply plugin: "io.spring.dependency-management"
 	apply plugin: "idea"
+        apply plugin: 'com.github.ben-manes.versions'
+        apply plugin: 'org.owasp.dependencycheck'
 
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
@@ -81,6 +85,23 @@ project(":infra-rest-jersey") {
 	}
 }
 
+project(":infra-json-rpc") {
+	dependencies {
+		compile project(":app-api")
+		compile "org.springframework:spring-web"
+		compile "com.github.briandilley.jsonrpc4j:jsonrpc4j:1.2.0"
+	}
+}
+
+project(":infra-graphql") {
+	dependencies {
+		compile project(":app-api")
+		compile "com.graphql-java:graphql-spring-boot-starter:3.6.0"
+		compile 'com.graphql-java:graphiql-spring-boot-starter:3.6.0'
+		compile "com.graphql-java:graphql-java-tools:3.2.0"
+	}
+}
+
 project(":infra-db-jpa") {
 	dependencies {
 		compile project(":domain")
@@ -114,6 +135,8 @@ project(":springboot-deployment") {
 		compile project(":app-api")
 		compile project(":app-impl")
 		compile project(":infra-db-jpa")
+		compile project(":infra-json-rpc")
+		compile project(":infra-graphql")
 		compile project(":infra-rest-springmvc")
 
 		compile "org.springframework.boot:spring-boot-starter-web"

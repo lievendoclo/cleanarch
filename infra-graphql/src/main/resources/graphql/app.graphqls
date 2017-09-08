@@ -1,0 +1,14 @@
+type Building {
+    id: String!
+    name: String!
+    tenants: [Tenant]!
+}
+
+type Tenant {
+    id: String!
+    name: String!
+}
+
+type Query {
+    list(nameStartsWith: String!): [Building]!
+}
