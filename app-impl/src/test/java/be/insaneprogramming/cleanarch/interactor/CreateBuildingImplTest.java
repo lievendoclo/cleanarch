@@ -6,8 +6,8 @@ import static org.mockito.Mockito.mock;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import be.insaneprogramming.cleanarch.boundary.CreateBuilding;
@@ -19,7 +19,7 @@ public class CreateBuildingImplTest {
 	private CreateBuilding createBuilding;
 	private BuildingEntityGateway buildingEntityGateway;
 
-	@Before
+	@BeforeEach
 	public void initializeComponentUnderTest() {
 		buildingEntityGateway = mock(BuildingEntityGateway.class);
 		createBuilding = new CreateBuildingImpl(buildingEntityGateway);

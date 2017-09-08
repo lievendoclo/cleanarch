@@ -7,20 +7,20 @@ import static org.mockito.Mockito.mock;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
 
 import be.insaneprogramming.cleanarch.boundary.ListBuildings;
 import be.insaneprogramming.cleanarch.entity.Building;
 import be.insaneprogramming.cleanarch.entity.BuildingFactory;
 import be.insaneprogramming.cleanarch.entitygateway.BuildingEntityGateway;
 import be.insaneprogramming.cleanarch.requestmodel.ListBuildingsRequest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ListBuildingsImplTest {
 	private ListBuildings listBuildings;
 	private BuildingEntityGateway buildingEntityGateway;
 
-	@Before
+	@BeforeEach
 	public void initializeComponentUnderTest() {
 		buildingEntityGateway = mock(BuildingEntityGateway.class);
 		listBuildings = new ListBuildingsImpl(buildingEntityGateway);

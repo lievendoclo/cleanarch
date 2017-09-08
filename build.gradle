@@ -6,12 +6,13 @@ buildscript {
 		}
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.1.RELEASE")
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.6.RELEASE")
 		classpath "io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE"
 		classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
 		classpath "gradle.plugin.com.ewerk.gradle.plugins:querydsl-plugin:1.0.7"
-                classpath 'com.github.ben-manes:gradle-versions-plugin:0.15.0'
-                classpath 'org.owasp:dependency-check-gradle:2.1.1'
+		classpath 'com.github.ben-manes:gradle-versions-plugin:0.15.0'
+		classpath 'org.owasp:dependency-check-gradle:2.1.1'
+		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-RC3'
 	}
 }
 
@@ -19,11 +20,16 @@ subprojects {
 	apply plugin: "java"
 	apply plugin: "io.spring.dependency-management"
 	apply plugin: "idea"
-        apply plugin: 'com.github.ben-manes.versions'
-        apply plugin: 'org.owasp.dependencycheck'
+	apply plugin: 'com.github.ben-manes.versions'
+	apply plugin: 'org.owasp.dependencycheck'
+	apply plugin: 'org.junit.platform.gradle.plugin'
 
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
+
+	configurations {
+		junitXmlToHtml
+	}
 
 	repositories {
 		jcenter()
@@ -31,14 +37,41 @@ subprojects {
 
 	dependencyManagement {
 		imports {
-			mavenBom "io.spring.platform:platform-bom:Athens-RELEASE"
+			mavenBom "io.spring.platform:platform-bom:Brussels-SR4"
 		}
 	}
 
 	dependencies {
 		compile "com.google.code.findbugs:jsr305:3.0.1"
-		testCompile 'junit:junit:4.12'
+		testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0-RC2")
+		testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-RC2")
+		testRuntime("org.junit.platform:junit-platform-launcher:1.0.0-RC2")
+		testCompile("junit:junit:4.12")
+		testRuntime("org.junit.vintage:junit-vintage-engine:4.12.0-RC2")
 		testCompile 'org.assertj:assertj-core:3.6.1'
+		junitXmlToHtml 'org.apache.ant:ant-junit:1.9.7'
+	}
+
+	task generateHtmlTestReports << {
+		def reportsDir = new File(buildDir, 'test-reports')
+		reportsDir.mkdirs()
+
+		ant.taskdef(
+				name: 'junitReport',
+				classname: 'org.apache.tools.ant.taskdefs.optional.junit.XMLResultAggregator',
+				classpath: configurations.junitXmlToHtml.asPath
+		)
+
+		ant.junitReport(todir: "$buildDir/test-results/junit-platform", tofile: "aggregated-test-results.xml") {
+			fileset(dir: "$buildDir/test-results/junit-platform")
+			report(format: 'frames', todir: reportsDir)
+		}
+	}
+
+	afterEvaluate {
+		def junitPlatformTestTask = tasks.getByName('junitPlatformTest')
+		generateHtmlTestReports.dependsOn(junitPlatformTestTask)
+		check.dependsOn(generateHtmlTestReports)
 	}
 }
 
